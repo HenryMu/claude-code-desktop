@@ -31,7 +31,11 @@
       "Bash(taskkill //F //IM electron.exe)",
       "Bash(where claude.exe)",
       "Bash(where claude.cmd)",
-      "Read(//d/App/node/**)"
+      "Read(//d/App/node/**)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(find C:/Users/aiweo/.claude/projects/ -name \"*.jsonl\" ! -name \"agent-*\" -exec du -b {} +)",
+      "Bash(ping:*)"
     ]
   }
 }

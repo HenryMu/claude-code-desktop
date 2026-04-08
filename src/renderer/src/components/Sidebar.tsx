@@ -78,17 +78,6 @@ export default function Sidebar({
                           {session.model && <span>{session.model}</span>}
                         </div>
                       </div>
-                      <div className="session-actions">
-                        <button
-                          className="btn-icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onResumeSession(project.sanitizedName, session.sessionId)
-                          }}
-                        >
-                          Resume
-                        </button>
-                      </div>
                     </div>
                   ))}
               </div>

@@ -172,10 +172,11 @@ export class SessionWatcher {
     const project = this.projectIndexes.get(sanitizedName)
     if (!project) return
 
-    // Update metadata by re-reading full file metadata (cheap — just scanning types/timestamps)
-    const fullLines = this.readAndParse(filePath, 0)
-    const meta = this.buildSessionMeta(sessionId, sanitizedName, fullLines)
-    project.sessions.set(sessionId, meta)
+    // Incrementally update metadata instead of re-reading entire file
+    const meta = project.sessions.get(sessionId)
+    if (meta) {
+      this.updateSessionMetaIncr(meta, newLines)
+    }
 
     this.send('session-updated', {
       projectSanitizedName: sanitizedName,
@@ -224,6 +225,36 @@ export class SessionWatcher {
     const sessionId = fileName.replace('.jsonl', '')
     if (sessionId.startsWith('agent-')) return null
     return { sanitizedName, sessionId }
+  }
+
+  /** Incrementally update session metadata from new lines only */
+  private updateSessionMetaIncr(meta: SessionMeta, newLines: JsonlLine[]): void {
+    for (const line of newLines) {
+      if (line.timestamp) {
+        if (!meta.firstTimestamp) meta.firstTimestamp = line.timestamp
+        meta.lastTimestamp = line.timestamp
+      }
+      if (line.type === 'user') {
+        meta.userMessageCount++
+        if (!meta.firstUserMessage && line.message?.content) {
+          const content = line.message.content
+          if (typeof content === 'string') {
+            meta.firstUserMessage = content.slice(0, 100)
+          } else if (Array.isArray(content)) {
+            const textBlock = content.find((b: any) => b.type === 'text')
+            if (textBlock && 'text' in textBlock) {
+              meta.firstUserMessage = textBlock.text.slice(0, 100)
+            }
+          }
+        }
+        if ((line as any).cwd) meta.cwd = (line as any).cwd
+        if ((line as any).gitBranch) meta.gitBranch = (line as any).gitBranch
+      }
+      if (line.type === 'assistant') {
+        meta.assistantMessageCount++
+        if (line.message?.model) meta.model = line.message.model
+      }
+    }
   }
 
   private readAndParse(filePath: string, startOffset: number): JsonlLine[] {
