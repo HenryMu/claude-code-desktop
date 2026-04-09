@@ -1,0 +1,113 @@
+# Claude Code Desktop
+
+**[English](./README.md)** | **[中文](./README.zh-CN.md)** | **[日本語](./README.ja.md)** | **[한국어](./README.ko.md)**
+
+> **コミュニティオープンソースプロジェクト** — これは [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI 用の無料・オープンソースデスクトップ GUI です。
+> Anthropic 公式の [Claude Desktop](https://claude.ai/download) アプリ（有料サブスクリプションが必要）では **ありません**。
+> 本プロジェクトは MIT ライセンスで公開されており、Anthropic とは提携、推奨、公式の関係はありません。
+
+![Electron](https://img.shields.io/badge/Electron-34-black?logo=electron) ![React](https://img.shields.io/badge/React-19-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript) ![License](https://img.shields.io/badge/License-MIT-green)
+
+![スクリーンショット](./screenshot.png)
+
+## 機能
+
+- **セッションブラウザ** — `~/.claude/projects/` からすべての Claude Code プロジェクトとセッションを自動検出
+- **リアルタイム同期** — `.jsonl` セッションファイルの変更を監視し、会話の進行に合わせて自動更新
+- **会話ビュー** — 折りたたみ可能な思考ブロックとツール呼び出しカード付きのフォーマット済みメッセージ表示
+- **ターミナル統合** — Claude Code CLI と直接対話できるフル `xterm.js` ターミナル
+- **セッション再開** — クリックするだけで `claude --resume <session-id>` でセッションを再開
+- **権限プロンプト** — Claude Code がツール権限を要求した際に、Allow/Always/Deny ボタンをインタラクティブに表示
+- **クロスプラットフォーム** — Windows、macOS、Linux に対応
+
+## なぜこのプロジェクトを作ったのか？
+
+Claude Code は非常に強力な CLI ツールです — でも、全員がターミナルで作業しているわけではありません。
+
+開発者として、複数のセッションを管理し、会話履歴を閲覧し、プロジェクト全体を俯瞰できる、より視覚的な方法が欲しいと考えていました。ターミナルのタブを切り替えたり、長い出力の中をスクロールして探すのは、なかなか面倒です。
+
+そこで Claude Code Desktop を作りました — みなさんがすでに知って愛用している Claude Code CLI をラップする、無料・オープンソースの GUI です。Claude Code CLI へのアクセス以外にサブスクリプションは不要です。インストールして接続するだけですぐに使い始められます。
+
+**目標はシンプルです：** Claude Code をすべての人にとってより使いやすく、より生産的にすること。そして 100% 無料・オープンソースであり続けること。
+
+## 公式 Claude Desktop との違い
+
+| | Claude Desktop（Anthropic 公式） | Claude Code Desktop（本プロジェクト） |
+|---|---|---|
+| **種類** | Anthropic 公式製品 | サードパーティコミュニティプロジェクト |
+| **料金** | Claude Pro / Max サブスクリプションが必要 | **無料 & オープンソース**（MIT ライセンス） |
+| **インターフェース** | チャット中心の GUI | ターミナル + 会話ハイブリッド GUI |
+| **バックエンド** | Anthropic API に直接接続 | Claude Code CLI |
+| **オープンソース** | クローズドソース | **完全オープンソース** |
+| **対象ユーザー** | 一般ユーザー | Claude Code CLI を使用する開発者 |
+
+どちらも素晴らしいツールです — ただ、異なるニーズに応えるものです。洗練された Claude とのチャット体験をお探しなら、公式の Claude Desktop をお使いください。Claude Code CLI を日常的に使い、セッションを視覚的に管理したい開発者の方は、ぜひお試しください。
+
+## はじめに
+
+### 前提条件
+
+- [Node.js](https://nodejs.org/) >= 18
+- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) がインストール・設定済み
+
+### インストール
+
+```bash
+git clone https://github.com/HenryMu/claude-code-desktop.git
+cd claude-code-desktop
+npm install
+```
+
+### 開発
+
+```bash
+npm run dev
+```
+
+### ビルド
+
+```bash
+npm run build
+```
+
+## アーキテクチャ
+
+```
+src/
+├── shared/types.ts              # 共通 TypeScript 型（IPC、JSONL、Session）
+├── main/
+│   ├── index.ts                 # Electron メインプロセスエントリ
+│   ├── ipc-handlers.ts          # IPC チャネル登録
+│   ├── session-watcher.ts       # ファイル監視 + インクリメンタル JSONL パーサー
+│   ├── claude-manager.ts        # node-pty プロセスライフサイクル管理
+│   └── path-utils.ts            # クロスプラットフォームパス sanitiz/unsanitize
+├── preload/
+│   └── index.ts                 # contextBridge API
+└── renderer/
+    ├── index.html
+    └── src/
+        ├── App.tsx              # ルートレイアウトとタブ状態
+        ├── components/
+        │   ├── Sidebar.tsx      # プロジェクトツリー + セッションリスト
+        │   └── MainContent.tsx  # 会話 + ターミナルタブ
+        ├── hooks/
+        │   ├── useSessionWatcher.ts  # セッションデータ IPC リスナー
+        │   └── useClaudeManager.ts   # PTY プロセス管理
+        └── styles/
+            └── global.css       # Catppuccin ダークテーマ
+```
+
+## 技術スタック
+
+| コンポーネント | 技術 |
+|---------------|------|
+| デスクトップフレームワーク | [Electron](https://www.electronjs.org/) 34 |
+| ビルドツール | [electron-vite](https://electron-vite.org/) |
+| フロントエンド | [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) |
+| ターミナル | [xterm.js](https://xtermjs.org/) + [node-pty](https://github.com/microsoft/node-pty) |
+| ファイル監視 | [chokidar](https://github.com/paulmillr/chokidar) |
+| スタイリング | CSS（Catppuccin ダークテーマ） |
+
+## ライセンス
+
+[MIT](./LICENSE)

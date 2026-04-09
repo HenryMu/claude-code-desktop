@@ -101,7 +101,7 @@ export default function Sidebar({
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h2>ClaudeDesk</h2>
+        <h2>CC-Desktop</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <LangSwitch />
           <button className="settings-btn" onClick={onOpenSettings}>⚙</button>

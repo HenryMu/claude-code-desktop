@@ -66,8 +66,16 @@ function buildTrayMenu(): Menu {
   ])
 }
 
+function getIconPath(filename: string): string {
+  // Dev: project root; Packaged: process.resourcesPath (extraResources)
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, filename)
+  }
+  return path.join(__dirname, '../../' + filename)
+}
+
 function createTray(): void {
-  const iconPath = path.join(__dirname, '../../logo.png')
+  const iconPath = getIconPath('logo.png')
   const icon = nativeImage.createFromPath(iconPath)
   tray = new Tray(icon.resize({ width: 16, height: 16 }))
   tray.setToolTip('Claude Code Desktop')
@@ -85,7 +93,7 @@ function createTray(): void {
 }
 
 function createWindow(): void {
-  const iconPath = path.join(__dirname, '../../logo.png')
+  const iconPath = getIconPath('logo.png')
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,

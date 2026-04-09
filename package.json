@@ -40,7 +40,8 @@
     ],
     "win": {
       "icon": "logo.ico",
-      "target": "nsis"
+      "target": "nsis",
+      "signAndEditExecutable": false
     },
     "mac": {
       "icon": "logo.icns",
