@@ -43,6 +43,11 @@
       "target": "nsis",
       "signAndEditExecutable": false
     },
+    "publish": {
+      "provider": "github",
+      "owner": "HenryMu",
+      "repo": "claude-code-desktop"
+    },
     "mac": {
       "icon": "logo.icns",
       "target": "dmg"
