@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "ClaudeDesk"
+  },
+  "sidebar": {
+    "newSession": "+ New Session",
+    "emptyProject": "No sessions",
+    "pendingLabel": "Pending",
+    "emptySession": "(empty session)",
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "msgs": "{{count}} msgs"
+  },
+  "tabs": {
+    "conversation": "Conversation",
+    "terminal": "Terminal"
+  },
+  "conversation": {
+    "selectProject": "Select a project to view sessions",
+    "selectSession": "Select a session to start a conversation",
+    "noMessages": "No messages yet",
+    "noMessagesConnect": "No messages yet. Connect to start.",
+    "newSessionNotConnected": "New session — not connected yet",
+    "connectStart": "Connect & Start",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "connected": "Connected",
+    "notConnected": "Session not connected",
+    "inputPlaceholder": "Type a message and press Enter...",
+    "inputPlaceholderOffline": "Connect to start typing...",
+    "send": "Send",
+    "thinking": "Claude is thinking...",
+    "you": "You",
+    "claude": "Claude"
+  },
+  "terminal": {
+    "noSession": "No active terminal session",
+    "startNew": "Start New Session",
+    "notConnected": "Session not connected",
+    "connect": "Connect",
+    "processExited": "[Process exited]"
+  },
+  "permission": {
+    "allow": "Allow (y)",
+    "always": "Always (a)",
+    "deny": "Deny (n)",
+    "manualPlaceholder": "Manual input...",
+    "manualPlaceholderFailed": "Type y/n and Enter...",
+    "send": "Send",
+    "failedBadge": "Auto-response failed",
+    "failedHint": "Auto-response failed. Type y/n above or switch to Terminal tab.",
+    "maxReached": "Failed to connect. Max sessions reached."
+  },
+  "tools": {
+    "thinking": "Thinking..."
+  },
+  "language": {
+    "switch": "中文",
+    "label": "Language"
+  }
+}

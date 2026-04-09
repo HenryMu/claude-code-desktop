@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "ClaudeDesk"
+  },
+  "sidebar": {
+    "newSession": "+ नया सेशन",
+    "emptyProject": "कोई सेशन नहीं",
+    "pendingLabel": "लंबित",
+    "emptySession": "(खाली सेशन)",
+    "justNow": "अभी",
+    "minutesAgo": "{{count}} मिनट पहले",
+    "hoursAgo": "{{count}} घंटे पहले",
+    "msgs": "{{count}} संदेश"
+  },
+  "tabs": {
+    "conversation": "वार्तालाप",
+    "terminal": "टर्मिनल"
+  },
+  "conversation": {
+    "selectProject": "सेशन देखने के लिए प्रोजेक्ट चुनें",
+    "selectSession": "बातचीत शुरू करने के लिए सेशन चुनें",
+    "noMessages": "अभी कोई संदेश नहीं",
+    "noMessagesConnect": "अभी कोई संदेश नहीं। कृपया कनेक्ट करें।",
+    "newSessionNotConnected": "नया सेशन — अभी कनेक्ट नहीं हुआ",
+    "connectStart": "कनेक्ट करें और शुरू करें",
+    "connect": "कनेक्ट",
+    "disconnect": "डिस्कनेक्ट",
+    "connected": "कनेक्टेड",
+    "notConnected": "सेशन कनेक्ट नहीं है",
+    "inputPlaceholder": "संदेश टाइप करें और Enter दबाएं...",
+    "inputPlaceholderOffline": "कनेक्ट होने के बाद टाइप करें...",
+    "send": "भेजें",
+    "thinking": "Claude सोच रहा है...",
+    "you": "आप",
+    "claude": "Claude"
+  },
+  "terminal": {
+    "noSession": "कोई सक्रिय टर्मिनल सेशन नहीं",
+    "startNew": "नया सेशन शुरू करें",
+    "notConnected": "सेशन कनेक्ट नहीं है",
+    "connect": "कनेक्ट",
+    "processExited": "[प्रक्रिया समाप्त]"
+  },
+  "permission": {
+    "allow": "अनुमति दें (y)",
+    "always": "हमेशा अनुमति दें (a)",
+    "deny": "अस्वीकार करें (n)",
+    "manualPlaceholder": "मैनुअल इनपुट...",
+    "manualPlaceholderFailed": "y/n टाइप करें और Enter दबाएं...",
+    "send": "भेजें",
+    "failedBadge": "स्वतः प्रतिक्रिया विफल",
+    "failedHint": "स्वतः प्रतिक्रिया विफल। ऊपर y/n टाइप करें या टर्मिनल टैब पर स्विच करें।",
+    "maxReached": "कनेक्ट विफल। अधिकतम सेशन सीमा पहुंची।"
+  },
+  "tools": {
+    "thinking": "सोच रहा है..."
+  },
+  "language": {
+    "switch": "हिन्दी",
+    "label": "भाषा"
+  }
+}

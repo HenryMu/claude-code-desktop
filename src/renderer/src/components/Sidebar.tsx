@@ -1,6 +1,8 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import type { SessionMeta, ActiveProcess } from '../../../shared/types'
 import type { ConnectionInfo } from '../hooks/useClaudeManager'
+import LangSwitch from './LangSwitch'
 
 interface ProjectData {
   sanitizedName: string
@@ -43,7 +45,10 @@ export default function Sidebar({
     <div className="sidebar">
       <div className="sidebar-header">
         <h2>ClaudeDesk</h2>
-        <span className="connection-counter">{connections.size}/3</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <LangSwitch />
+          <span className="connection-counter">{connections.size}/10</span>
+        </div>
       </div>
       <div className="sidebar-content">
         {projects.map((project) => {

@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "ClaudeDesk"
+  },
+  "sidebar": {
+    "newSession": "+ 新建會話",
+    "emptyProject": "暫無會話",
+    "pendingLabel": "等待中",
+    "emptySession": "（空會話）",
+    "justNow": "剛剛",
+    "minutesAgo": "{{count}}分鐘前",
+    "hoursAgo": "{{count}}小時前",
+    "msgs": "{{count}} 則訊息"
+  },
+  "tabs": {
+    "conversation": "會話",
+    "terminal": "終端"
+  },
+  "conversation": {
+    "selectProject": "選擇一個專案以查看會話",
+    "selectSession": "選擇一個會話以開始對話",
+    "noMessages": "暫無訊息",
+    "noMessagesConnect": "暫無訊息，請先連線。",
+    "newSessionNotConnected": "新會話 — 尚未連線",
+    "connectStart": "連線並開始",
+    "connect": "連線",
+    "disconnect": "斷開",
+    "connected": "已連線",
+    "notConnected": "會話未連線",
+    "inputPlaceholder": "輸入訊息，按 Enter 發送...",
+    "inputPlaceholderOffline": "連線後開始輸入...",
+    "send": "發送",
+    "thinking": "Claude 正在思考...",
+    "you": "你",
+    "claude": "Claude"
+  },
+  "terminal": {
+    "noSession": "沒有活動的終端會話",
+    "startNew": "開始新會話",
+    "notConnected": "會話未連線",
+    "connect": "連線",
+    "processExited": "[程序已退出]"
+  },
+  "permission": {
+    "allow": "允許 (y)",
+    "always": "始終允許 (a)",
+    "deny": "拒絕 (n)",
+    "manualPlaceholder": "手動輸入...",
+    "manualPlaceholderFailed": "輸入 y/n 後按 Enter...",
+    "send": "發送",
+    "failedBadge": "自動回應失敗",
+    "failedHint": "自動回應失敗。請在上方輸入 y/n 或切換到終端分頁。",
+    "maxReached": "連線失敗，已達到最大會話數。"
+  },
+  "tools": {
+    "thinking": "思考中..."
+  },
+  "language": {
+    "switch": "繁體中文",
+    "label": "語言"
+  }
+}

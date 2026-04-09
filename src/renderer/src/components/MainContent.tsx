@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { SessionMeta, ActiveProcess, JsonlLine, SessionDetailsPayload } from '../../../shared/types'
 import type { TabType } from '../App'
 import type { ConnectionInfo } from '../hooks/useClaudeManager'
@@ -40,6 +41,7 @@ interface MainContentProps {
 }
 
 export default function MainContent({ sessionState, claudeState, activeTab, onTabChange, newSessionProcessKey }: MainContentProps) {
+  const { t } = useTranslation()
   const { selectedProject, selectedSession, sessionDetails, projects } = sessionState
   const project = projects.find((p) => p.sanitizedName === selectedProject)
 
@@ -55,7 +57,7 @@ export default function MainContent({ sessionState, claudeState, activeTab, onTa
   if (!selectedProject || !project) {
     return (
       <div className="main-content">
-        <div className="empty-state">Select a project to view sessions</div>
+        <div className="empty-state">{t('conversation.selectProject')}</div>
       </div>
     )
   }
@@ -67,13 +69,13 @@ export default function MainContent({ sessionState, claudeState, activeTab, onTa
           className={`tab-item ${activeTab === 'conversation' ? 'active' : ''}`}
           onClick={() => onTabChange('conversation')}
         >
-          Conversation
+          {t('tabs.conversation')}
         </button>
         <button
           className={`tab-item ${activeTab === 'terminal' ? 'active' : ''}`}
           onClick={() => onTabChange('terminal')}
         >
-          Terminal
+          {t('tabs.terminal')}
         </button>
       </div>
 
@@ -118,6 +120,7 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
   isPending: boolean
   claudeState: ClaudeState
 }) {
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = useState('')
   const [permissionPrompt, setPermissionPrompt] = useState<string | null>(null)
   const [permissionCountdown, setPermissionCountdown] = useState(0)
@@ -252,7 +255,7 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
   if (!selectedSession) {
     return (
       <div className="tab-pane">
-        <div className="empty-state">Select a session to start a conversation</div>
+        <div className="empty-state">{t('conversation.selectSession')}</div>
       </div>
     )
   }
@@ -274,14 +277,14 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
       <div className="history-messages">
         {isPending && !isConnected ? (
           <div className="empty-state" style={{ padding: 40 }}>
-            <p style={{ color: 'var(--text-muted)', marginBottom: 16 }}>New session — not connected yet</p>
-            <button className="btn btn-connect" onClick={handleConnect}>Connect & Start</button>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 16 }}>{t('conversation.newSessionNotConnected')}</p>
+            <button className="btn btn-connect" onClick={handleConnect}>{t('conversation.connectStart')}</button>
             {connectError && <p style={{ color: 'var(--danger)', marginTop: 8, fontSize: 12 }}>{connectError}</p>}
           </div>
         ) : messages.length === 0 && !isConnected ? (
           <div className="empty-state" style={{ padding: 40 }}>
-            <p style={{ color: 'var(--text-muted)', marginBottom: 16 }}>No messages yet. Connect to start.</p>
-            <button className="btn btn-connect" onClick={handleConnect}>Connect</button>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 16 }}>{t('conversation.noMessagesConnect')}</p>
+            <button className="btn btn-connect" onClick={handleConnect}>{t('conversation.connect')}</button>
             {connectError && <p style={{ color: 'var(--danger)', marginTop: 8, fontSize: 12 }}>{connectError}</p>}
           </div>
         ) : (
@@ -295,7 +298,7 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
                 <div className="thinking-dots">
                   <span className="thinking-dot" /><span className="thinking-dot" /><span className="thinking-dot" />
                 </div>
-                <span className="thinking-label">Claude is thinking...</span>
+                <span className="thinking-label">{t('conversation.thinking')}</span>
               </div>
             )}
           </>
@@ -306,17 +309,17 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
       {/* Connection control bar */}
       {!isConnected && !isPending && selectedSession && !selectedSession.startsWith('__pending_') && (
         <div className="connect-bar">
-          <span className="connect-bar-text">Session not connected</span>
+          <span className="connect-bar-text">{t('conversation.notConnected')}</span>
           <button className="btn btn-connect" onClick={handleConnect}>
-            Connect ({claudeState.activeCount}/{claudeState.maxConnections})
+            {t('conversation.connect')} ({claudeState.activeCount}/{claudeState.maxConnections})
           </button>
           {connectError && <span className="connect-error">{connectError}</span>}
         </div>
       )}
       {isConnected && processKey && (
         <div className="connect-bar connect-bar-active">
-          <span className="connect-bar-text">Connected</span>
-          <button className="btn btn-disconnect" onClick={handleDisconnect}>Disconnect</button>
+          <span className="connect-bar-text">{t('conversation.connected')}</span>
+          <button className="btn btn-disconnect" onClick={handleDisconnect}>{t('conversation.disconnect')}</button>
         </div>
       )}
 
@@ -355,10 +358,10 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
       {/* Input bar */}
       <div className="input-bar">
         <input type="text" className="chat-input"
-          placeholder={isConnected ? "Type a message and press Enter..." : "Connect to start typing..."}
+          placeholder={isConnected ? t('conversation.inputPlaceholder') : t('conversation.inputPlaceholderOffline')}
           value={inputValue} onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown} disabled={!isConnected} />
-        <button className="btn" onClick={handleSend} disabled={!inputValue.trim() || !isConnected}>Send</button>
+        <button className="btn" onClick={handleSend} disabled={!inputValue.trim() || !isConnected}>{t('conversation.send')}</button>
       </div>
     </div>
   )

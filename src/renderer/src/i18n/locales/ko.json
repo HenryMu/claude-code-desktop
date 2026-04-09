@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "ClaudeDesk"
+  },
+  "sidebar": {
+    "newSession": "+ 새 세션",
+    "emptyProject": "세션 없음",
+    "pendingLabel": "대기 중",
+    "emptySession": "(빈 세션)",
+    "justNow": "방금",
+    "minutesAgo": "{{count}}분 전",
+    "hoursAgo": "{{count}}시간 전",
+    "msgs": "메시지 {{count}}개"
+  },
+  "tabs": {
+    "conversation": "대화",
+    "terminal": "터미널"
+  },
+  "conversation": {
+    "selectProject": "프로젝트를 선택하여 세션을 확인하세요",
+    "selectSession": "세션을 선택하여 대화를 시작하세요",
+    "noMessages": "메시지가 없습니다",
+    "noMessagesConnect": "메시지가 없습니다. 연결해 주세요.",
+    "newSessionNotConnected": "새 세션 — 아직 연결되지 않음",
+    "connectStart": "연결 및 시작",
+    "connect": "연결",
+    "disconnect": "연결 해제",
+    "connected": "연결됨",
+    "notConnected": "세션이 연결되지 않음",
+    "inputPlaceholder": "메시지를 입력하고 Enter를 누르세요...",
+    "inputPlaceholderOffline": "연결 후 입력을 시작하세요...",
+    "send": "보내기",
+    "thinking": "Claude가 생각 중입니다...",
+    "you": "나",
+    "claude": "Claude"
+  },
+  "terminal": {
+    "noSession": "활성 터미널 세션 없음",
+    "startNew": "새 세션 시작",
+    "notConnected": "세션 연결 안 됨",
+    "connect": "연결",
+    "processExited": "[프로세스 종료됨]"
+  },
+  "permission": {
+    "allow": "허용 (y)",
+    "always": "항상 허용 (a)",
+    "deny": "거부 (n)",
+    "manualPlaceholder": "수동 입력...",
+    "manualPlaceholderFailed": "y/n을 입력하고 Enter...",
+    "send": "보내기",
+    "failedBadge": "자동 응답 실패",
+    "failedHint": "자동 응답에 실패했습니다. 위에 y/n을 입력하거나 터미널 탭으로 전환하세요.",
+    "maxReached": "연결 실패. 최대 세션 수에 도달했습니다."
+  },
+  "tools": {
+    "thinking": "생각 중..."
+  },
+  "language": {
+    "switch": "한국어",
+    "label": "언어"
+  }
+}

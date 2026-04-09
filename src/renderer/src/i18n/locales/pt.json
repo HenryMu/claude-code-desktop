@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "ClaudeDesk"
+  },
+  "sidebar": {
+    "newSession": "+ Nova sessão",
+    "emptyProject": "Sem sessões",
+    "pendingLabel": "Pendente",
+    "emptySession": "(sessão vazia)",
+    "justNow": "agora mesmo",
+    "minutesAgo": "{{count}}min atrás",
+    "hoursAgo": "{{count}}h atrás",
+    "msgs": "{{count}} msgs"
+  },
+  "tabs": {
+    "conversation": "Conversa",
+    "terminal": "Terminal"
+  },
+  "conversation": {
+    "selectProject": "Selecione um projeto para ver as sessões",
+    "selectSession": "Selecione uma sessão para começar",
+    "noMessages": "Nenhuma mensagem ainda",
+    "noMessagesConnect": "Nenhuma mensagem ainda. Conecte-se para começar.",
+    "newSessionNotConnected": "Nova sessão — não conectada",
+    "connectStart": "Conectar e iniciar",
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "connected": "Conectado",
+    "notConnected": "Sessão não conectada",
+    "inputPlaceholder": "Digite uma mensagem e pressione Enter...",
+    "inputPlaceholderOffline": "Conecte-se para começar a digitar...",
+    "send": "Enviar",
+    "thinking": "Claude está pensando...",
+    "you": "Você",
+    "claude": "Claude"
+  },
+  "terminal": {
+    "noSession": "Nenhuma sessão de terminal ativa",
+    "startNew": "Iniciar nova sessão",
+    "notConnected": "Sessão não conectada",
+    "connect": "Conectar",
+    "processExited": "[Processo encerrado]"
+  },
+  "permission": {
+    "allow": "Permitir (y)",
+    "always": "Sempre (a)",
+    "deny": "Negar (n)",
+    "manualPlaceholder": "Entrada manual...",
+    "manualPlaceholderFailed": "Digite y/n e Enter...",
+    "send": "Enviar",
+    "failedBadge": "Resposta automática falhou",
+    "failedHint": "Resposta automática falhou. Digite y/n acima ou mude para a aba Terminal.",
+    "maxReached": "Falha ao conectar. Limite máximo de sessões atingido."
+  },
+  "tools": {
+    "thinking": "Pensando..."
+  },
+  "language": {
+    "switch": "Português",
+    "label": "Idioma"
+  }
+}

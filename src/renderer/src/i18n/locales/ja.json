@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "ClaudeDesk"
+  },
+  "sidebar": {
+    "newSession": "+ 新しいセッション",
+    "emptyProject": "セッションなし",
+    "pendingLabel": "待機中",
+    "emptySession": "（空のセッション）",
+    "justNow": "たった今",
+    "minutesAgo": "{{count}}分前",
+    "hoursAgo": "{{count}}時間前",
+    "msgs": "{{count}}件のメッセージ"
+  },
+  "tabs": {
+    "conversation": "会話",
+    "terminal": "ターミナル"
+  },
+  "conversation": {
+    "selectProject": "プロジェクトを選択してセッションを表示",
+    "selectSession": "セッションを選択して会話を開始",
+    "noMessages": "メッセージはまだありません",
+    "noMessagesConnect": "メッセージはまだありません。接続してください。",
+    "newSessionNotConnected": "新しいセッション — 未接続",
+    "connectStart": "接続して開始",
+    "connect": "接続",
+    "disconnect": "切断",
+    "connected": "接続済み",
+    "notConnected": "セッション未接続",
+    "inputPlaceholder": "メッセージを入力して Enter...",
+    "inputPlaceholderOffline": "接続して入力を開始...",
+    "send": "送信",
+    "thinking": "Claude が考えています...",
+    "you": "あなた",
+    "claude": "Claude"
+  },
+  "terminal": {
+    "noSession": "アクティブなターミナルセッションなし",
+    "startNew": "新しいセッションを開始",
+    "notConnected": "セッション未接続",
+    "connect": "接続",
+    "processExited": "[プロセス終了]"
+  },
+  "permission": {
+    "allow": "許可 (y)",
+    "always": "常に許可 (a)",
+    "deny": "拒否 (n)",
+    "manualPlaceholder": "手動入力...",
+    "manualPlaceholderFailed": "y/n を入力して Enter...",
+    "send": "送信",
+    "failedBadge": "自動応答に失敗",
+    "failedHint": "自動応答に失敗しました。上のフィールドに y/n を入力するか、ターミナルタブに切り替えてください。",
+    "maxReached": "接続に失敗。最大セッション数に達しました。"
+  },
+  "tools": {
+    "thinking": "思考中..."
+  },
+  "language": {
+    "switch": "日本語",
+    "label": "言語"
+  }
+}

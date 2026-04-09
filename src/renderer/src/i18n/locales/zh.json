@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "ClaudeDesk"
+  },
+  "sidebar": {
+    "newSession": "+ 新建会话",
+    "emptyProject": "暂无会话",
+    "pendingLabel": "等待中",
+    "emptySession": "（空会话）",
+    "justNow": "刚刚",
+    "minutesAgo": "{{count}}分钟前",
+    "hoursAgo": "{{count}}小时前",
+    "msgs": "{{count}} 条消息"
+  },
+  "tabs": {
+    "conversation": "会话",
+    "terminal": "终端"
+  },
+  "conversation": {
+    "selectProject": "选择一个项目查看会话",
+    "selectSession": "选择一个会话开始对话",
+    "noMessages": "暂无消息",
+    "noMessagesConnect": "暂无消息，请先连接。",
+    "newSessionNotConnected": "新会话 — 尚未连接",
+    "connectStart": "连接并开始",
+    "connect": "连接",
+    "disconnect": "断开",
+    "connected": "已连接",
+    "notConnected": "会话未连接",
+    "inputPlaceholder": "输入消息，按 Enter 发送...",
+    "inputPlaceholderOffline": "连接后开始输入...",
+    "send": "发送",
+    "thinking": "Claude 正在思考...",
+    "you": "你",
+    "claude": "Claude"
+  },
+  "terminal": {
+    "noSession": "没有活动的终端会话",
+    "startNew": "开始新会话",
+    "notConnected": "会话未连接",
+    "connect": "连接",
+    "processExited": "[进程已退出]"
+  },
+  "permission": {
+    "allow": "允许 (y)",
+    "always": "始终允许 (a)",
+    "deny": "拒绝 (n)",
+    "manualPlaceholder": "手动输入...",
+    "manualPlaceholderFailed": "输入 y/n 后回车...",
+    "send": "发送",
+    "failedBadge": "自动响应失败",
+    "failedHint": "自动响应失败。请在上方输入 y/n 或切换到终端标签页。",
+    "maxReached": "连接失败，已达到最大会话数。"
+  },
+  "tools": {
+    "thinking": "思考中..."
+  },
+  "language": {
+    "switch": "EN",
+    "label": "语言"
+  }
+}
