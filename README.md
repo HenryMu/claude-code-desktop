@@ -1,8 +1,14 @@
 # Claude Code Desktop
 
-A desktop application for managing and interacting with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) sessions. Built with Electron + React + TypeScript.
+**[English](./README.md)** | **[中文](./README.zh-CN.md)** | **[日本語](./README.ja.md)** | **[한국어](./README.ko.md)**
 
-![Claude Code Desktop](https://img.shields.io/badge/Electron-34-black?logo=electron) ![React](https://img.shields.io/badge/React-19-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript) ![License](https://img.shields.io/badge/License-MIT-green)
+> **Community Open Source Project** — This is a free, open-source desktop GUI for the [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI.
+> It is **NOT** the official [Claude Desktop](https://claude.ai/download) app by Anthropic (which requires a paid subscription).
+> This project is MIT-licensed and is not affiliated with, endorsed by, or connected to Anthropic.
+
+![Electron](https://img.shields.io/badge/Electron-34-black?logo=electron) ![React](https://img.shields.io/badge/React-19-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript) ![License](https://img.shields.io/badge/License-MIT-green)
+
+![Screenshot](./screenshot.png)
 
 ## Features
 
@@ -14,18 +20,28 @@ A desktop application for managing and interacting with [Claude Code](https://do
 - **Permission Prompts** — Interactive Allow/Always/Deny buttons when Claude Code requests tool permissions
 - **Cross-platform** — Works on Windows, macOS, and Linux
 
-## Screenshots
+## Why This Project?
 
-_Sidebar with project list and session history:_
+Claude Code is an incredibly powerful CLI tool — but not everyone lives in the terminal.
 
-- Left panel shows all projects with session counts
-- Each session displays first message preview, timestamp, model info
-- Active sessions indicated with green dot
+As developers, we wanted a more visual way to manage multiple sessions, browse conversation history, and keep an overview of our projects. Switching between terminal tabs and scrolling through long outputs gets old fast.
 
-_Tab-based main content:_
+So we built Claude Code Desktop — a free, open-source GUI that wraps the Claude Code CLI you already know and love. No subscription needed beyond your Claude Code CLI access. Just install, connect, and go.
 
-- **Conversation tab**: Formatted message history + input bar for sending messages
-- **Terminal tab**: Raw xterm.js terminal for direct interaction
+**The goal is simple:** make Claude Code more accessible and productive for everyone, while keeping it 100% free and open source.
+
+## How Is This Different from Claude Desktop?
+
+| | Claude Desktop (Official by Anthropic) | Claude Code Desktop (This Project) |
+|---|---|---|
+| **Type** | Official Anthropic product | Third-party community project |
+| **Cost** | Requires Claude Pro / Max subscription | **Free & Open Source** (MIT License) |
+| **Interface** | Chat-focused GUI | Terminal + Conversation hybrid GUI |
+| **Backend** | Anthropic API directly | Claude Code CLI |
+| **Open Source** | Closed source | **Fully open source** |
+| **Target Users** | General users | Developers using Claude Code CLI |
+
+Both are great tools — they just serve different needs. If you want a polished chat experience with Claude, use the official Claude Desktop. If you're a developer who lives in Claude Code CLI and wants a visual manager for your sessions, give this a try.
 
 ## Getting Started
 
@@ -81,43 +97,6 @@ src/
             └── global.css       # Catppuccin dark theme
 ```
 
-### Core Modules
-
-#### `session-watcher.ts`
-
-Monitors `~/.claude/projects/**/*.jsonl` using [chokidar](https://github.com/paulmillr/chokidar):
-
-- **Incremental parsing**: Tracks `byteOffset` per file, reads only new bytes on change
-- **Auto-debounce**: Uses `awaitWriteFinish: { stabilityThreshold: 300 }` to batch streaming writes
-- **Incremental metadata**: Updates session stats (message count, timestamps) without re-reading the full file
-- **Agent filtering**: Skips `agent-*.jsonl` sub-agent sessions
-
-#### `claude-manager.ts`
-
-Manages `claude` CLI processes via [node-pty](https://github.com/microsoft/node-pty):
-
-- **Single-process constraint**: `Map<projectName, ProcessEntry>` ensures one active PTY per project
-- **Cross-platform spawn**: On Windows, uses `cmd.exe /c claude` for `.cmd` compatibility; on Unix, spawns `claude` directly
-- **Process lifecycle**: `spawn()`, `resume()`, `kill()` with 3-second safety timeout for force-kill
-
-### IPC Channels
-
-| Channel | Direction | Description |
-|---------|-----------|-------------|
-| `initial-data` | Main → Renderer | Full project/session snapshot |
-| `session-updated` | Main → Renderer | Incremental JSONL lines + updated metadata |
-| `session-created` | Main → Renderer | New session file detected |
-| `session-deleted` | Main → Renderer | Session file removed |
-| `pty-data` | Main → Renderer | PTY stdout data |
-| `pty-spawned` | Main → Renderer | PTY process started |
-| `pty-exited` | Main → Renderer | PTY process exited |
-| `spawn-claude` | Renderer → Main | Start new session |
-| `resume-session` | Renderer → Main | Resume existing session |
-| `kill-claude` | Renderer → Main | Terminate PTY process |
-| `pty-write` | Renderer → Main | Write to PTY stdin |
-| `pty-resize` | Renderer → Main | Resize PTY dimensions |
-| `get-session-details` | Renderer → Main | Query full session data |
-
 ## Tech Stack
 
 | Component | Technology |
@@ -129,18 +108,6 @@ Manages `claude` CLI processes via [node-pty](https://github.com/microsoft/node-
 | File Watching | [chokidar](https://github.com/paulmillr/chokidar) |
 | Styling | CSS (Catppuccin dark theme) |
 
-## Path Mapping
-
-Claude Code stores projects with sanitized directory names:
-
-| Real Path | Sanitized Name |
-|-----------|---------------|
-| `E:\code\claudeDesktop` | `E--code-claudeDesktop` |
-| `C:\Users\alice` | `C--Users-alice` |
-| `/home/user/project` | `-home-user-project` |
-
-Claude Code Desktop reverses this mapping to resolve the correct working directory for PTY processes.
-
 ## License
 
-MIT
+[MIT](./LICENSE)
