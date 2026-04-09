@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import Sidebar from './components/Sidebar'
 import MainContent from './components/MainContent'
+import SettingsModal from './components/SettingsModal'
 import { useSessionWatcher } from './hooks/useSessionWatcher'
 import { useClaudeManager } from './hooks/useClaudeManager'
 
@@ -12,6 +13,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('conversation')
   // Track the processKey for the "new session" terminal
   const [newSessionProcessKey, setNewSessionProcessKey] = useState<string | null>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   // New session: spawn PTY immediately, switch to terminal tab
   const handleNewSession = useCallback(async (project: string) => {
@@ -42,6 +44,7 @@ export default function App() {
         onSelectProject={sessionState.selectProject}
         onSelectSession={handleSelectSession}
         onNewSession={handleNewSession}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
       <MainContent
         sessionState={sessionState}
@@ -50,6 +53,7 @@ export default function App() {
         onTabChange={setActiveTab}
         newSessionProcessKey={newSessionProcessKey}
       />
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }

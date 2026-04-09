@@ -58,5 +58,26 @@
   "language": {
     "switch": "EN",
     "label": "语言"
+  },
+  "settings": {
+    "title": "设置",
+    "configEditor": "配置编辑器",
+    "profiles": "配置集",
+    "saveConfig": "保存",
+    "configSaved": "配置已保存",
+    "configSaveError": "保存失败",
+    "addProfile": "新建配置集",
+    "editProfile": "编辑",
+    "saveProfile": "保存配置集",
+    "deleteProfile": "删除",
+    "applyProfile": "应用",
+    "profileSaved": "配置集已保存",
+    "profileDeleted": "配置集已删除",
+    "profileName": "配置集名称",
+    "profileNamePlaceholder": "我的配置",
+    "noProfiles": "暂无配置集",
+    "selectProfileHint": "选择或创建一个配置集",
+    "cancel": "取消",
+    "applied": "配置集已应用"
   }
 }

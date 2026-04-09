@@ -58,5 +58,26 @@
   "language": {
     "switch": "中文",
     "label": "Language"
+  },
+  "settings": {
+    "title": "Settings",
+    "configEditor": "Config Editor",
+    "profiles": "Profiles",
+    "saveConfig": "Save",
+    "configSaved": "Config saved",
+    "configSaveError": "Failed to save config",
+    "addProfile": "New Profile",
+    "editProfile": "Edit",
+    "saveProfile": "Save Profile",
+    "deleteProfile": "Delete",
+    "applyProfile": "Apply",
+    "profileSaved": "Profile saved",
+    "profileDeleted": "Profile deleted",
+    "profileName": "Profile Name",
+    "profileNamePlaceholder": "My Profile",
+    "noProfiles": "No profiles yet",
+    "selectProfileHint": "Select or create a profile",
+    "cancel": "Cancel",
+    "applied": "Profile applied"
   }
 }

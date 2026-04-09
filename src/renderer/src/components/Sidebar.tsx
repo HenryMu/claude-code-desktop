@@ -20,6 +20,7 @@ interface SidebarProps {
   onSelectProject: (name: string) => void
   onSelectSession: (project: string, sessionId: string) => void
   onNewSession: (project: string) => void
+  onOpenSettings: () => void
 }
 
 export default function Sidebar({
@@ -31,7 +32,8 @@ export default function Sidebar({
   connections,
   onSelectProject,
   onSelectSession,
-  onNewSession
+  onNewSession,
+  onOpenSettings
 }: SidebarProps) {
   // Build a set of connected sessionIds for fast lookup
   const connectedSessionIds = new Set<string>()
@@ -47,6 +49,7 @@ export default function Sidebar({
         <h2>ClaudeDesk</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <LangSwitch />
+          <button className="settings-btn" onClick={onOpenSettings}>⚙</button>
           <span className="connection-counter">{connections.size}/10</span>
         </div>
       </div>

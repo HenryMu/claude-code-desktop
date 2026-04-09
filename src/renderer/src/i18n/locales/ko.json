@@ -58,5 +58,26 @@
   "language": {
     "switch": "한국어",
     "label": "언어"
+  },
+  "settings": {
+    "title": "설정",
+    "configEditor": "설정 편집기",
+    "profiles": "프로필",
+    "saveConfig": "저장",
+    "configSaved": "설정이 저장되었습니다",
+    "configSaveError": "저장에 실패했습니다",
+    "addProfile": "새 프로필",
+    "editProfile": "편집",
+    "saveProfile": "프로필 저장",
+    "deleteProfile": "삭제",
+    "applyProfile": "적용",
+    "profileSaved": "프로필이 저장되었습니다",
+    "profileDeleted": "프로필이 삭제되었습니다",
+    "profileName": "프로필 이름",
+    "profileNamePlaceholder": "내 프로필",
+    "noProfiles": "프로필이 없습니다",
+    "selectProfileHint": "프로필을 선택하거나 만드세요",
+    "cancel": "취소",
+    "applied": "프로필이 적용되었습니다"
   }
 }

@@ -1,3 +1,21 @@
+// ===== Claude Config =====
+
+export interface ClaudeConfig {
+  ANTHROPIC_BASE_URL?: string
+  ANTHROPIC_AUTH_TOKEN?: string
+  ANTHROPIC_API_KEY?: string
+  ANTHROPIC_MODEL?: string
+  ANTHROPIC_SMALL_FAST_MODEL?: string
+}
+
+export interface ProfileData {
+  id: string
+  name: string
+  content: string
+  createdAt: string
+  updatedAt: string
+}
+
 // ===== Path Utils =====
 
 export interface ProjectInfo {
@@ -180,4 +198,13 @@ export interface ElectronAPI {
   getSessionDetails: (projectSanitizedName: string, sessionId: string) => Promise<SessionDetailsPayload>
   isProcessRunning: (processKey: string) => Promise<boolean>
   getActiveProcesses: () => Promise<ActiveProcess[]>
+
+  // Config & profiles
+  readConfig: () => Promise<ClaudeConfig>
+  saveConfig: (config: ClaudeConfig) => Promise<void>
+  readConfigFile: () => Promise<string>
+  writeConfigFile: (content: string) => Promise<void>
+  listProfiles: () => Promise<ProfileData[]>
+  saveProfile: (profile: ProfileData) => Promise<void>
+  deleteProfile: (profileId: string) => Promise<void>
 }

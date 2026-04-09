@@ -78,7 +78,16 @@ const electronAPI: ElectronAPI = {
   isProcessRunning: (processKey) =>
     ipcRenderer.invoke('is-process-running', processKey),
   getActiveProcesses: () =>
-    ipcRenderer.invoke('get-active-processes')
+    ipcRenderer.invoke('get-active-processes'),
+
+  // Config & profiles
+  readConfig: () => ipcRenderer.invoke('read-config'),
+  saveConfig: (config) => ipcRenderer.invoke('save-config', config),
+  readConfigFile: () => ipcRenderer.invoke('read-config-file'),
+  writeConfigFile: (content) => ipcRenderer.invoke('write-config-file', content),
+  listProfiles: () => ipcRenderer.invoke('list-profiles'),
+  saveProfile: (profile) => ipcRenderer.invoke('save-profile', profile),
+  deleteProfile: (profileId) => ipcRenderer.invoke('delete-profile', profileId)
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI)

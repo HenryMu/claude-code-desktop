@@ -58,5 +58,26 @@
   "language": {
     "switch": "繁體中文",
     "label": "語言"
+  },
+  "settings": {
+    "title": "設定",
+    "configEditor": "設定編輯器",
+    "profiles": "設定檔",
+    "saveConfig": "儲存",
+    "configSaved": "設定已儲存",
+    "configSaveError": "儲存失敗",
+    "addProfile": "新建立設定檔",
+    "editProfile": "編輯",
+    "saveProfile": "儲存設定檔",
+    "deleteProfile": "刪除",
+    "applyProfile": "套用",
+    "profileSaved": "設定檔已儲存",
+    "profileDeleted": "設定檔已刪除",
+    "profileName": "設定檔名稱",
+    "profileNamePlaceholder": "我的設定",
+    "noProfiles": "尚無設定檔",
+    "selectProfileHint": "選擇或建立一個設定檔",
+    "cancel": "取消",
+    "applied": "設定檔已套用"
   }
 }

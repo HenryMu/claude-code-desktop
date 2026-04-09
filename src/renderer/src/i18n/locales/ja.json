@@ -58,5 +58,26 @@
   "language": {
     "switch": "日本語",
     "label": "言語"
+  },
+  "settings": {
+    "title": "設定",
+    "configEditor": "設定エディタ",
+    "profiles": "プロファイル",
+    "saveConfig": "保存",
+    "configSaved": "設定を保存しました",
+    "configSaveError": "保存に失敗しました",
+    "addProfile": "新規プロファイル",
+    "editProfile": "編集",
+    "saveProfile": "プロファイルを保存",
+    "deleteProfile": "削除",
+    "applyProfile": "適用",
+    "profileSaved": "プロファイルを保存しました",
+    "profileDeleted": "プロファイルを削除しました",
+    "profileName": "プロファイル名",
+    "profileNamePlaceholder": "マイプロファイル",
+    "noProfiles": "プロファイルがありません",
+    "selectProfileHint": "プロファイルを選択または作成してください",
+    "cancel": "キャンセル",
+    "applied": "プロファイルを適用しました"
   }
 }

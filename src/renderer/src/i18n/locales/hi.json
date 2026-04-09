@@ -58,5 +58,26 @@
   "language": {
     "switch": "हिन्दी",
     "label": "भाषा"
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "configEditor": "कॉन्फ़िग संपादक",
+    "profiles": "प्रोफ़ाइल",
+    "saveConfig": "सहेजें",
+    "configSaved": "कॉन्फ़िग सहेजा गया",
+    "configSaveError": "सहेजने में विफल",
+    "addProfile": "नई प्रोफ़ाइल",
+    "editProfile": "संपादित करें",
+    "saveProfile": "प्रोफ़ाइल सहेजें",
+    "deleteProfile": "हटाएं",
+    "applyProfile": "लागू करें",
+    "profileSaved": "प्रोफ़ाइल सहेजी गई",
+    "profileDeleted": "प्रोफ़ाइल हटाई गई",
+    "profileName": "प्रोफ़ाइल नाम",
+    "profileNamePlaceholder": "मेरी प्रोफ़ाइल",
+    "noProfiles": "कोई प्रोफ़ाइल नहीं",
+    "selectProfileHint": "प्रोफ़ाइल चुनें या बनाएं",
+    "cancel": "रद्द करें",
+    "applied": "प्रोफ़ाइल लागू की गई"
   }
 }

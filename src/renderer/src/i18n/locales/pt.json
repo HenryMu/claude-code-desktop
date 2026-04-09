@@ -58,5 +58,26 @@
   "language": {
     "switch": "Português",
     "label": "Idioma"
+  },
+  "settings": {
+    "title": "Configurações",
+    "configEditor": "Editor de Config",
+    "profiles": "Perfis",
+    "saveConfig": "Salvar",
+    "configSaved": "Config salva",
+    "configSaveError": "Falha ao salvar",
+    "addProfile": "Novo Perfil",
+    "editProfile": "Editar",
+    "saveProfile": "Salvar Perfil",
+    "deleteProfile": "Excluir",
+    "applyProfile": "Aplicar",
+    "profileSaved": "Perfil salvo",
+    "profileDeleted": "Perfil excluído",
+    "profileName": "Nome do Perfil",
+    "profileNamePlaceholder": "Meu Perfil",
+    "noProfiles": "Nenhum perfil",
+    "selectProfileHint": "Selecione ou crie um perfil",
+    "cancel": "Cancelar",
+    "applied": "Perfil aplicado"
   }
 }

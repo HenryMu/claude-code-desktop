@@ -1,10 +1,13 @@
 import { ipcMain } from 'electron'
 import { SessionWatcher } from './session-watcher'
 import { ClaudeManager } from './claude-manager'
+import { readClaudeConfig, writeClaudeConfig, readConfigFile, writeConfigFile, listProfiles, saveProfile, deleteProfile } from './config-manager'
+import type { ClaudeConfig, ProfileData } from '../shared/types'
 
 export function registerIpcHandlers(
   sessionWatcher: SessionWatcher,
-  claudeManager: ClaudeManager
+  claudeManager: ClaudeManager,
+  homeDir: string
 ): void {
   // ===== Claude process management =====
 
@@ -59,5 +62,35 @@ export function registerIpcHandlers(
 
   ipcMain.handle('get-active-processes', () => {
     return claudeManager.getActiveProcesses()
+  })
+
+  // ===== Config & Profile management =====
+
+  ipcMain.handle('read-config', () => {
+    return readClaudeConfig(homeDir)
+  })
+
+  ipcMain.handle('save-config', (_, config: ClaudeConfig) => {
+    writeClaudeConfig(homeDir, config)
+  })
+
+  ipcMain.handle('read-config-file', () => {
+    return readConfigFile(homeDir)
+  })
+
+  ipcMain.handle('write-config-file', (_, content: string) => {
+    writeConfigFile(homeDir, content)
+  })
+
+  ipcMain.handle('list-profiles', () => {
+    return listProfiles(homeDir)
+  })
+
+  ipcMain.handle('save-profile', (_, profile: ProfileData) => {
+    saveProfile(homeDir, profile)
+  })
+
+  ipcMain.handle('delete-profile', (_, profileId: string) => {
+    deleteProfile(homeDir, profileId)
   })
 }
