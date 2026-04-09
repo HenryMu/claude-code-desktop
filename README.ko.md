@@ -70,6 +70,19 @@ npm run dev
 npm run build
 ```
 
+### macOS: Gatekeeper 우회 방법
+
+이 앱은 Apple Developer 인증서로 서명되지 않았으므로 macOS에서 보안 경고가 표시됩니다. 여는 방법:
+
+1. 앱을 우클릭 → **열기** 선택
+2. 대화상자에서 다시 **열기** 클릭
+
+또는 터미널에서 실행:
+
+```bash
+xattr -cr /Applications/Claude\ Code\ Desktop.app
+```
+
 ## 아키텍처
 
 ```

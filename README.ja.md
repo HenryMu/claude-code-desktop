@@ -70,6 +70,19 @@ npm run dev
 npm run build
 ```
 
+### macOS：Gatekeeper の回避
+
+本アプリは Apple Developer 証明書で署名されていないため、macOS にセキュリティ警告が表示されます。開くには：
+
+1. アプリを右クリック → **開く** を選択
+2. ダイアログで再度 **開く** をクリック
+
+またはターミナルで実行：
+
+```bash
+xattr -cr /Applications/Claude\ Code\ Desktop.app
+```
+
 ## アーキテクチャ
 
 ```

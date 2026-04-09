@@ -70,6 +70,19 @@ npm run dev
 npm run build
 ```
 
+### macOS: Bypass Gatekeeper
+
+Since this app is not signed with an Apple Developer certificate, macOS will show a security warning. To open it:
+
+1. Right-click the app → select **Open**
+2. Click **Open** again in the dialog
+
+Or run this in Terminal:
+
+```bash
+xattr -cr /Applications/Claude\ Code\ Desktop.app
+```
+
 ## Architecture
 
 ```

@@ -70,6 +70,19 @@ npm run dev
 npm run build
 ```
 
+### macOS：绕过 Gatekeeper
+
+由于本应用未经 Apple 开发者证书签名，macOS 会显示安全警告。打开方式：
+
+1. 右键点击应用 → 选择 **打开**
+2. 在弹窗中再次点击 **打开**
+
+或在终端中执行：
+
+```bash
+xattr -cr /Applications/Claude\ Code\ Desktop.app
+```
+
 ## 架构
 
 ```
