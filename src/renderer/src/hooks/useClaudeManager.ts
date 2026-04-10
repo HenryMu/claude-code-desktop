@@ -100,7 +100,7 @@ export function useClaudeManager() {
   }, [connections])
 
   const activeCount = connections.size
-  const maxConnections = 10
+  const maxConnections = Infinity
 
   return {
     activeProcesses,
