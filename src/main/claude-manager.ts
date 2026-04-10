@@ -37,7 +37,7 @@ const PERMISSION_PATTERNS: RegExp[] = [
 
 const PERMISSION_TIMEOUT_MS = 30_000
 const CONFIRMATION_TIMEOUT_MS = 3_000
-const MAX_CONCURRENT_PROCESSES = 10
+const MAX_CONCURRENT_PROCESSES = Infinity
 
 const RESPONSE_STRATEGIES: Array<{ name: string; build: (char: string) => Array<string | null> }> = [
   { name: 'raw-char-then-enter', build: (char) => [char, '\r'] },
