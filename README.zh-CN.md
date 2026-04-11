@@ -1,6 +1,6 @@
 # Claude Libre
 
-**[中文](./README.zh-CN.md)** | [English](./README.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md)
+**[中文](./README.md)** | [English](./README.en.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md)
 
 > **社区开源项目** — 这是一个免费、开源的 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI 桌面 GUI 客户端。
 > 它 **不是** Anthropic 官方的 [Claude Desktop](https://claude.ai/download) 应用（官方应用需要付费订阅）。
