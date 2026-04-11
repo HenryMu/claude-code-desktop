@@ -8,6 +8,10 @@ import type { SessionMeta, CodeViewContext } from '../../shared/types'
 
 export type TabType = 'conversation' | 'terminal' | 'code'
 
+function stripAnsi(text: string): string {
+  return text.replace(/\x1b\[[0-9;?]*[a-zA-Z]/g, '')
+}
+
 export default function App() {
   const sessionState = useSessionWatcher()
   const claudeState = useClaudeManager()
@@ -61,16 +65,36 @@ export default function App() {
 
     setNewSessionProcessKey(pk)
 
-    const sendLine = (text: string, delay: number) => {
-      window.setTimeout(() => window.electronAPI.ptyWrite(pk, `${text}\r`), delay)
+    const waitForPtyMatch = (matcher: (text: string) => boolean, timeoutMs: number) =>
+      new Promise<boolean>((resolve) => {
+        let settled = false
+        let cleanup = () => {}
+
+        const finish = (matched: boolean) => {
+          if (settled) return
+          settled = true
+          cleanup()
+          resolve(matched)
+        }
+
+        cleanup = window.electronAPI.onPtyData((payload) => {
+          if (payload.processKey !== pk) return
+          if (matcher(stripAnsi(payload.data))) {
+            finish(true)
+          }
+        })
+
+        window.setTimeout(() => finish(false), timeoutMs)
+      })
+
+    await waitForPtyMatch((text) => text.trim().length > 0, 2500)
+
+    if (model && model !== 'sonnet') {
+      window.electronAPI.ptyWrite(pk, `/model ${model}\r`)
+      await waitForPtyMatch((text) => /Set model to/i.test(text), 8000)
     }
 
-    let nextDelay = 1400
-    if (model && model !== 'sonnet') {
-      sendLine(`/model ${model}`, nextDelay)
-      nextDelay += 550
-    }
-    sendLine(trimmed, nextDelay)
+    window.electronAPI.ptyWrite(pk, `${trimmed}\r`)
   }, [claudeState, sessionState])
 
   // Select session in sidebar: only load history, don't connect PTY
