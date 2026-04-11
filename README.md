@@ -99,26 +99,30 @@ xattr -cr /Applications/Claude\ Libre.app
 src/
 ├── shared/types.ts              # 共享 TypeScript 类型（IPC、JSONL、Session）
 ├── main/
-│   ├── index.ts                 # Electron 主进程入口
-│   ├── ipc-handlers.ts          # IPC 通道注册
+│   ├── index.ts                 # Electron 主进程入口（窗口、托盘、菜单）
+│   ├── ipc-handlers.ts          # IPC 通道注册（会话、配置、文件、图片）
 │   ├── session-watcher.ts       # 文件监听 + 增量 JSONL 解析器
-│   ├── claude-manager.ts        # node-pty 进程生命周期管理
+│   ├── claude-manager.ts        # node-pty 进程生命周期 + 消息提交管理
+│   ├── config-manager.ts        # Claude 配置读写 + 配置集持久化
 │   └── path-utils.ts            # 跨平台路径编码/解码
 ├── preload/
-│   └── index.ts                 # contextBridge API
+│   └── index.ts                 # contextBridge API（安全桥接）
 └── renderer/
     ├── index.html
     └── src/
-        ├── App.tsx              # 根布局与标签状态
+        ├── App.tsx              # 根布局（标签状态、代码视图上下文）
         ├── components/
-        │   ├── Sidebar.tsx      # 项目树 + 会话列表
-        │   ├── MainContent.tsx  # 对话 + 终端 + 代码标签页
+        │   ├── Sidebar.tsx      # 项目树 + 会话列表 + 右键菜单
+        │   ├── MainContent.tsx  # 对话 + 终端 + 代码标签页 + 图片上传
         │   ├── ThemeSwitch.tsx  # 浅色/暗色/跟随系统主题切换
-        │   ├── LangSwitch.tsx   # 语言切换
-        │   └── SettingsModal.tsx # 配置编辑器 + 配置集管理
+        │   ├── LangSwitch.tsx   # 多语言切换
+        │   └── SettingsModal.tsx # 配置编辑器 + 配置集管理（统一面板）
         ├── hooks/
         │   ├── useSessionWatcher.ts  # 会话数据 IPC 监听
         │   └── useClaudeManager.ts   # PTY 进程管理
+        ├── i18n/
+        │   ├── index.ts          # i18next 初始化
+        │   └── locales/          # 7 种语言翻译文件
         └── styles/
             └── global.css       # 暗色/浅色主题与全局样式
 ```

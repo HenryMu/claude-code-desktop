@@ -99,26 +99,30 @@ xattr -cr /Applications/Claude\ Libre.app
 src/
 ├── shared/types.ts              # Shared TypeScript types (IPC, JSONL, Session)
 ├── main/
-│   ├── index.ts                 # Electron main process entry
-│   ├── ipc-handlers.ts          # IPC channel registration
+│   ├── index.ts                 # Electron main process entry (window, tray, menu)
+│   ├── ipc-handlers.ts          # IPC channel registration (session, config, file, image)
 │   ├── session-watcher.ts       # File watcher + incremental JSONL parser
-│   ├── claude-manager.ts        # node-pty process lifecycle manager
+│   ├── claude-manager.ts        # node-pty process lifecycle + message submit manager
+│   ├── config-manager.ts        # Claude config read/write + profile persistence
 │   └── path-utils.ts            # Cross-platform path sanitize/unsanitize
 ├── preload/
-│   └── index.ts                 # contextBridge API
+│   └── index.ts                 # contextBridge API (secure bridge)
 └── renderer/
     ├── index.html
     └── src/
-        ├── App.tsx              # Root layout with tab state
+        ├── App.tsx              # Root layout (tab state, code view context)
         ├── components/
-        │   ├── Sidebar.tsx      # Project tree + session list
-        │   ├── MainContent.tsx  # Conversation + Terminal + Code tabs
+        │   ├── Sidebar.tsx      # Project tree + session list + context menu
+        │   ├── MainContent.tsx  # Conversation + Terminal + Code tabs + image upload
         │   ├── ThemeSwitch.tsx  # Light/dark/system theme switcher
         │   ├── LangSwitch.tsx   # Language switcher
-        │   └── SettingsModal.tsx # Config editor + profile manager
+        │   └── SettingsModal.tsx # Config editor + profile manager (unified panel)
         ├── hooks/
         │   ├── useSessionWatcher.ts  # Session data IPC listener
         │   └── useClaudeManager.ts   # PTY process management
+        ├── i18n/
+        │   ├── index.ts          # i18next initialization
+        │   └── locales/          # 7 language translation files
         └── styles/
             └── global.css       # Dark/light themes and app styling
 ```
