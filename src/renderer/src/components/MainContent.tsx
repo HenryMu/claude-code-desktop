@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
 import type { SessionMeta, ActiveProcess, JsonlLine, SessionDetailsPayload, FileNode, CodeViewContext } from '../../../shared/types'
 import type { TabType } from '../App'
@@ -853,7 +854,32 @@ function MessageItem({ line, project, onViewInCode }: { line: JsonlLine; project
         {role === 'user' ? 'You' : 'Claude'}
       </div>
       <div className="message-content">
-        {textContent.trim() && <pre className="message-text">{textContent}</pre>}
+        {textContent.trim() && (
+          <div className="message-markdown">
+            <ReactMarkdown
+              components={{
+                a: ({ ...props }) => <a {...props} target="_blank" rel="noreferrer" />,
+                code: ({ className, children, ...props }) => {
+                  const isBlock = Boolean(className)
+                  if (isBlock) {
+                    return (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    )
+                  }
+                  return (
+                    <code className="inline-code" {...props}>
+                      {children}
+                    </code>
+                  )
+                }
+              }}
+            >
+              {textContent}
+            </ReactMarkdown>
+          </div>
+        )}
         {thinkingBlocks.map((block: any, i: number) => (
           <details key={`think-${i}`} className="thinking-block">
             <summary className="thinking-header">Thinking...</summary>

@@ -1,4 +1,8 @@
 import { BrowserWindow } from 'electron'
+import { execFileSync } from 'child_process'
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
 import pty, { IPty } from 'node-pty'
 import { unsanitizePath } from './path-utils'
 
@@ -65,6 +69,8 @@ export class ClaudeManager {
     timer: ReturnType<typeof setTimeout>
   }> = new Map()
   private workspaceTrustAttempts: Map<string, number> = new Map()
+  private resolvedShellEnv: Record<string, string> | null = null
+  private resolvedClaudePath: string | null = null
   private processCounter = 0
 
   constructor(mainWindow: BrowserWindow) {
@@ -214,6 +220,168 @@ export class ClaudeManager {
     setTimeout(() => this.executeStrategy(processKey, confirm.response, confirm.strategyIndex + 1), 150)
   }
 
+  private isExecutable(filePath: string): boolean {
+    try {
+      fs.accessSync(filePath, fs.constants.X_OK)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  private mergePathEntries(entries: Array<string | undefined | null>): string {
+    const seen = new Set<string>()
+    const result: string[] = []
+
+    for (const entry of entries) {
+      if (!entry) continue
+      for (const part of entry.split(':')) {
+        const trimmed = part.trim()
+        if (!trimmed || seen.has(trimmed)) continue
+        seen.add(trimmed)
+        result.push(trimmed)
+      }
+    }
+
+    return result.join(':')
+  }
+
+  private parseEnvOutput(output: Buffer): Record<string, string> {
+    const marker = Buffer.from('__CCD_ENV_START__\0')
+    const markerIndex = output.indexOf(marker)
+    if (markerIndex === -1) return {}
+
+    const envPayload = output.subarray(markerIndex + marker.length).toString('utf8')
+    const parsed: Record<string, string> = {}
+
+    for (const line of envPayload.split('\0')) {
+      const separatorIndex = line.indexOf('=')
+      if (separatorIndex <= 0) continue
+      const key = line.slice(0, separatorIndex)
+      const value = line.slice(separatorIndex + 1)
+      parsed[key] = value
+    }
+
+    return parsed
+  }
+
+  private getShellCandidates(): string[] {
+    return Array.from(new Set([
+      process.env.SHELL,
+      '/bin/zsh',
+      '/bin/bash',
+      '/bin/sh'
+    ].filter(Boolean) as string[]))
+  }
+
+  private loadLoginShellEnv(): Record<string, string> {
+    const basePath = this.mergePathEntries([
+      process.env.PATH,
+      '/opt/homebrew/bin',
+      '/usr/local/bin',
+      '/usr/bin',
+      '/bin',
+      '/usr/sbin',
+      '/sbin',
+      path.join(os.homedir(), '.local', 'bin'),
+      path.join(os.homedir(), 'bin')
+    ])
+
+    for (const shell of this.getShellCandidates()) {
+      try {
+        const output = execFileSync(
+          shell,
+          ['-ilc', 'printf "__CCD_ENV_START__\\0"; env -0'],
+          {
+            encoding: 'buffer',
+            maxBuffer: 1024 * 1024,
+            env: {
+              ...process.env,
+              PATH: basePath
+            }
+          }
+        )
+
+        const parsed = this.parseEnvOutput(output)
+        if (Object.keys(parsed).length > 0) {
+          return parsed
+        }
+      } catch (err) {
+        console.warn(`[ClaudeDesktop:Main] Failed to load login shell env via ${shell}:`, err)
+      }
+    }
+
+    return {}
+  }
+
+  private getSpawnEnv(): Record<string, string> {
+    if (this.resolvedShellEnv) return { ...this.resolvedShellEnv }
+
+    const fallbackPath = this.mergePathEntries([
+      process.env.PATH,
+      '/opt/homebrew/bin',
+      '/usr/local/bin',
+      '/usr/bin',
+      '/bin',
+      '/usr/sbin',
+      '/sbin',
+      path.join(os.homedir(), '.local', 'bin'),
+      path.join(os.homedir(), 'bin')
+    ])
+
+    let shellEnv: Record<string, string> = {}
+    if (process.platform === 'darwin') {
+      shellEnv = this.loadLoginShellEnv()
+    }
+
+    const mergedEnv = {
+      ...process.env,
+      ...shellEnv,
+      PATH: this.mergePathEntries([
+        shellEnv.PATH,
+        fallbackPath
+      ])
+    } as Record<string, string>
+
+    this.resolvedShellEnv = mergedEnv
+    return { ...mergedEnv }
+  }
+
+  private resolveClaudeExecutable(env: Record<string, string>): string {
+    if (this.resolvedClaudePath && this.isExecutable(this.resolvedClaudePath)) {
+      return this.resolvedClaudePath
+    }
+
+    const candidatePaths = [
+      process.env.CLAUDE_PATH,
+      path.join('/opt/homebrew/bin', 'claude'),
+      path.join('/usr/local/bin', 'claude'),
+      path.join('/usr/bin', 'claude'),
+      path.join(os.homedir(), '.local', 'bin', 'claude'),
+      path.join(os.homedir(), 'bin', 'claude')
+    ].filter(Boolean) as string[]
+
+    for (const candidate of candidatePaths) {
+      if (this.isExecutable(candidate)) {
+        this.resolvedClaudePath = candidate
+        return candidate
+      }
+    }
+
+    const pathEntries = (env.PATH || '').split(':').filter(Boolean)
+    for (const dir of pathEntries) {
+      const candidate = path.join(dir, 'claude')
+      if (this.isExecutable(candidate)) {
+        this.resolvedClaudePath = candidate
+        return candidate
+      }
+    }
+
+    throw new Error(
+      'Unable to locate the `claude` executable. On macOS packaged builds, launch from Terminal once or install Claude Code CLI into a standard PATH location such as /opt/homebrew/bin or /usr/local/bin.'
+    )
+  }
+
   /** Spawn a new Claude session (no --resume). Returns processKey. */
   async spawnNew(projectSanitizedName: string, cols: number, rows: number): Promise<{ processKey: string; pid: number }> {
     if (this.processes.size >= MAX_CONCURRENT_PROCESSES) {
@@ -248,20 +416,32 @@ export class ClaudeManager {
     const isWin = process.platform === 'win32'
     let ptyProcess: IPty
 
-    if (isWin) {
-      const shell = process.env.COMSPEC || 'cmd.exe'
-      const claudeArgs = args.length > 0 ? `claude ${args.join(' ')}` : 'claude'
-      ptyProcess = pty.spawn(shell, ['/c', claudeArgs], {
-        name: 'xterm-256color', cols: cols || 80, rows: rows || 24,
-        cwd: realPath,
-        env: { ...process.env, TERM: 'xterm-256color', COLORTERM: 'truecolor' } as Record<string, string>
-      })
-    } else {
-      ptyProcess = pty.spawn('claude', args, {
-        name: 'xterm-256color', cols: cols || 80, rows: rows || 24,
-        cwd: realPath,
-        env: { ...process.env, TERM: 'xterm-256color', COLORTERM: 'truecolor' } as Record<string, string>
-      })
+    try {
+      const spawnEnv = {
+        ...this.getSpawnEnv(),
+        TERM: 'xterm-256color',
+        COLORTERM: 'truecolor'
+      } as Record<string, string>
+
+      if (isWin) {
+        const shell = process.env.COMSPEC || 'cmd.exe'
+        const claudeArgs = args.length > 0 ? `claude ${args.join(' ')}` : 'claude'
+        ptyProcess = pty.spawn(shell, ['/c', claudeArgs], {
+          name: 'xterm-256color', cols: cols || 80, rows: rows || 24,
+          cwd: realPath,
+          env: spawnEnv
+        })
+      } else {
+        const claudeExecutable = this.resolveClaudeExecutable(spawnEnv)
+        ptyProcess = pty.spawn(claudeExecutable, args, {
+          name: 'xterm-256color', cols: cols || 80, rows: rows || 24,
+          cwd: realPath,
+          env: spawnEnv
+        })
+      }
+    } catch (err) {
+      console.error('[ClaudeDesktop:Main] Failed to spawn Claude process:', err)
+      throw err
     }
 
     const entry: ProcessEntry = {
@@ -386,6 +566,10 @@ export class ClaudeManager {
     this.responseConfirm.clear()
     this.processes.clear()
     this.ptyBuffers.clear()
+    this.workspaceTrustBuffers.clear()
+    this.workspaceTrustAttempts.clear()
+    this.resolvedShellEnv = null
+    this.resolvedClaudePath = null
   }
 
   private send(channel: string, data: unknown): void {
