@@ -7,6 +7,23 @@ interface ProjectData {
   sessions: SessionMeta[]
 }
 
+function createFallbackPendingMeta(project: string, sessionId: string): SessionMeta {
+  const now = new Date().toISOString()
+  return {
+    sessionId,
+    projectSanitizedName: project,
+    firstTimestamp: now,
+    lastTimestamp: now,
+    userMessageCount: 0,
+    assistantMessageCount: 0,
+    cwd: null,
+    gitBranch: null,
+    model: null,
+    firstUserMessage: null,
+    title: null
+  }
+}
+
 export function useSessionWatcher() {
   const [projects, setProjects] = useState<ProjectData[]>([])
   const [selectedProject, setSelectedProject] = useState<string | null>(null)
@@ -124,7 +141,10 @@ export function useSessionWatcher() {
   const refreshDetails = useCallback(async (project: string, sessionId: string) => {
     // Don't try to load details for pending sessions
     if (sessionId.startsWith('__pending_')) {
-      setSessionDetails({ lines: [], meta: pendingSessions.get(sessionId) || null as any })
+      setSessionDetails({
+        lines: [],
+        meta: pendingSessions.get(sessionId) || createFallbackPendingMeta(project, sessionId)
+      })
       return
     }
     try {

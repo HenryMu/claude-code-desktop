@@ -808,7 +808,7 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
     }
     setOptimisticThinking(false)
     setAllowLiveTurnState(latestTurnStatus !== 'idle')
-  }, [sessionDetails?.lines.length, sessionDetails?.meta.sessionId, latestTurnStatus])
+  }, [sessionDetails?.lines.length, sessionDetails?.meta?.sessionId, latestTurnStatus])
 
   // Permission events — filtered by processKey
   useEffect(() => {
