@@ -1,66 +1,66 @@
 # Claude Libre
 
-**[中文](./README.zh-CN.md)** | [English](./README.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md)
+**[中文](./README.md)** | [English](./README.en.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md)
 
-> **Community Open Source Project** — This is a free, open-source desktop GUI for the [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI.
-> It is **NOT** the official [Claude Desktop](https://claude.ai/download) app by Anthropic (which requires a paid subscription).
-> This project is MIT-licensed and is not affiliated with, endorsed by, or connected to Anthropic.
+> **社区开源项目** — 这是一个免费、开源的 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI 桌面 GUI 客户端。
+> 它 **不是** Anthropic 官方的 [Claude Desktop](https://claude.ai/download) 应用（官方应用需要付费订阅）。
+> 本项目基于 MIT 协议开源，与 Anthropic 没有关联、未被背书、也不存在官方联系。
 
 ![Electron](https://img.shields.io/badge/Electron-34-black?logo=electron) ![React](https://img.shields.io/badge/React-19-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript) ![License](https://img.shields.io/badge/License-MIT-green)
 
-![Screenshot 1](./images/01.png)
-![Screenshot 2](./images/02.png)
-![Screenshot 3](./images/03.png)
+![截图 1](./images/01.png)
+![截图 2](./images/02.png)
+![截图 3](./images/03.png)
 
-## Features
+## 功能特性
 
-- **Project & Session Browser** — Automatically discovers Claude Code projects and sessions from `~/.claude/projects/`
-- **Instant New Sessions** — Pick a workspace, choose a model, type your first prompt, and create a new session directly from the conversation page
-- **Real-time Sync** — Watches `.jsonl` session files for changes, auto-updates as conversations progress
-- **Conversation View** — Formatted message display with collapsible thinking blocks and tool call cards
-- **Code Tab** — Browse project files and inspect Claude Code `Write` / `Edit` changes with a Monaco-powered viewer and diff editor
-- **Terminal Integration** — Full `xterm.js` terminal for direct CLI interaction with Claude Code
-- **Image Upload** — Attach images to messages, with preview thumbnails
-- **@file Mention** — Type `@` to autocomplete project file paths
-- **Model & Effort Controls** — Switch models, set thinking effort, and use slash-command autocomplete from the input toolbar
-- **Cancel Button** — Interrupt current operation with one click
-- **Smart Permission Handling** — Interactive Allow/Always/Deny controls plus automatic confirmation for Claude Code trusted-workspace prompts
-- **Themes** — Dark mode, polished light mode, and a system-following default with a quick theme switcher
-- **Profiles & Settings** — Manage Claude config and reusable profiles from the built-in settings panel
-- **Multilingual UI** — English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Hindi, and Portuguese
-- **Cross-platform** — Works on Windows, macOS, and Linux
+- **项目与会话浏览器** — 自动发现 `~/.claude/projects/` 下的 Claude Code 项目和会话
+- **即时新建会话** — 选择工作区、选择模型、输入第一条提示词，即可直接从会话页创建新会话
+- **实时同步** — 监听 `.jsonl` 会话文件变化，随对话进展自动更新
+- **对话视图** — 格式化消息展示，支持折叠的思考块和工具调用卡片
+- **代码标签页** — 浏览项目文件，并通过 Monaco 查看 Claude Code `Write` / `Edit` 变更和差异
+- **终端集成** — 完整的 `xterm.js` 终端，可直接与 Claude Code CLI 交互
+- **图片上传** — 支持在消息中附加图片，带缩略图预览
+- **@file 提及** — 输入 `@` 自动补全项目文件路径
+- **模型与深度控制** — 在输入栏切换模型、设置思考深度，并支持斜杠命令自动补全
+- **取消按钮** — 一键中断当前操作
+- **智能权限处理** — 提供 Allow/Always/Deny 交互控制，并自动确认 Claude Code 的可信工作区提示
+- **主题** — 支持暗色模式、精致浅色模式，以及默认跟随系统主题的快速切换
+- **配置集与设置** — 内置设置面板，可管理 Claude 配置和可复用配置集
+- **多语言界面** — 支持英文、简体中文、繁体中文、日文、韩文、印地语和葡萄牙语
+- **跨平台** — 支持 Windows、macOS 和 Linux
 
-## Why This Project?
+## 为什么做这个项目？
 
-Claude Code is an incredibly powerful CLI tool — but not everyone lives in the terminal.
+Claude Code 是一个极其强大的 CLI 工具 — 但并不是每个人都习惯在终端中工作。
 
-As developers, we wanted a more visual way to manage multiple sessions, browse conversation history, and keep an overview of our projects. Switching between terminal tabs and scrolling through long outputs gets old fast.
+作为开发者，我们希望有一种更直观的方式来管理多个会话、浏览对话历史、统览所有项目。在终端标签页之间来回切换、在长输出中滚动查找信息，效率并不高。
 
-So we built Claude Libre — a free, open-source GUI that wraps the Claude Code CLI you already know and love. No subscription needed beyond your Claude Code CLI access. Just install, connect, and go.
+所以我们打造了 Claude Libre — 一个免费、开源的 GUI，封装了你已经熟悉和喜爱的 Claude Code CLI。除了 Claude Code CLI 本身的访问权限外，不需要任何额外订阅。安装、连接、开箱即用。
 
-**The goal is simple:** make Claude Code more accessible and productive for everyone, while keeping it 100% free and open source.
+**目标很简单：** 让 Claude Code 对每个人都更易用、更高效，同时保持 100% 免费和开源。
 
-## How Is This Different from Claude Desktop?
+## 与官方产品的区别
 
-| | Claude Desktop (Official by Anthropic) | Claude Libre (This Project) |
+| | Claude Desktop（Anthropic 官方） | Claude Libre（本项目） |
 |---|---|---|
-| **Type** | Official Anthropic product | Third-party community project |
-| **Cost** | Requires Claude Pro / Max subscription | **Free & Open Source** (MIT License) |
-| **Interface** | Chat-focused GUI | Terminal + Conversation hybrid GUI |
-| **Backend** | Anthropic API directly | Claude Code CLI |
-| **Open Source** | Closed source | **Fully open source** |
-| **Target Users** | General users | Developers using Claude Code CLI |
+| **类型** | Anthropic 官方产品 | 第三方社区项目 |
+| **费用** | 需要 Claude Pro / Max 订阅 | **免费 & 开源**（MIT 协议） |
+| **界面** | 以聊天为核心的 GUI | 终端 + 对话混合型 GUI |
+| **后端** | 直接调用 Anthropic API | Claude Code CLI |
+| **开源** | 闭源 | **完全开源** |
+| **目标用户** | 普通用户 | 使用 Claude Code CLI 的开发者 |
 
-Both are great tools — they just serve different needs. If you want a polished chat experience with Claude, use the official Claude Desktop. If you're a developer who lives in Claude Code CLI and wants a visual manager for your sessions, give this a try.
+两者都是优秀的工具 — 只是满足不同的需求。如果你想要一个精致的 Claude 聊天体验，请使用官方 Claude Desktop。如果你是深度使用 Claude Code CLI 的开发者，想要一个可视化的会话管理器，欢迎试试本项目。
 
-## Getting Started
+## 快速开始
 
-### Prerequisites
+### 前置要求
 
 - [Node.js](https://nodejs.org/) >= 18
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and configured
+- 已安装并配置 [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code)
 
-### Install
+### 安装
 
 ```bash
 git clone https://github.com/HenryMu/claude-libre.git
@@ -68,73 +68,73 @@ cd claude-libre
 npm install
 ```
 
-### Development
+### 开发
 
 ```bash
 npm run dev
 ```
 
-### Build
+### 构建
 
 ```bash
 npm run build
 ```
 
-### macOS: Bypass Gatekeeper
+### macOS：绕过 Gatekeeper
 
-Since this app is not signed with an Apple Developer certificate, macOS will show a security warning. To open it:
+由于本应用未经 Apple 开发者证书签名，macOS 会显示安全警告。打开方式：
 
-1. Right-click the app → select **Open**
-2. Click **Open** again in the dialog
+1. 右键点击应用 → 选择 **打开**
+2. 在弹窗中再次点击 **打开**
 
-Or run this in Terminal:
+或在终端中执行：
 
 ```bash
 xattr -cr /Applications/Claude\ Libre.app
 ```
 
-## Architecture
+## 架构
 
 ```
 src/
-├── shared/types.ts              # Shared TypeScript types (IPC, JSONL, Session)
+├── shared/types.ts              # 共享 TypeScript 类型（IPC、JSONL、Session）
 ├── main/
-│   ├── index.ts                 # Electron main process entry
-│   ├── ipc-handlers.ts          # IPC channel registration
-│   ├── session-watcher.ts       # File watcher + incremental JSONL parser
-│   ├── claude-manager.ts        # node-pty process lifecycle manager
-│   └── path-utils.ts            # Cross-platform path sanitize/unsanitize
+│   ├── index.ts                 # Electron 主进程入口
+│   ├── ipc-handlers.ts          # IPC 通道注册
+│   ├── session-watcher.ts       # 文件监听 + 增量 JSONL 解析器
+│   ├── claude-manager.ts        # node-pty 进程生命周期管理
+│   └── path-utils.ts            # 跨平台路径编码/解码
 ├── preload/
 │   └── index.ts                 # contextBridge API
 └── renderer/
     ├── index.html
     └── src/
-        ├── App.tsx              # Root layout with tab state
+        ├── App.tsx              # 根布局与标签状态
         ├── components/
-        │   ├── Sidebar.tsx      # Project tree + session list
-        │   ├── MainContent.tsx  # Conversation + Terminal + Code tabs
-        │   ├── ThemeSwitch.tsx  # Light/dark/system theme switcher
-        │   ├── LangSwitch.tsx   # Language switcher
-        │   └── SettingsModal.tsx # Config editor + profile manager
+        │   ├── Sidebar.tsx      # 项目树 + 会话列表
+        │   ├── MainContent.tsx  # 对话 + 终端 + 代码标签页
+        │   ├── ThemeSwitch.tsx  # 浅色/暗色/跟随系统主题切换
+        │   ├── LangSwitch.tsx   # 语言切换
+        │   └── SettingsModal.tsx # 配置编辑器 + 配置集管理
         ├── hooks/
-        │   ├── useSessionWatcher.ts  # Session data IPC listener
-        │   └── useClaudeManager.ts   # PTY process management
+        │   ├── useSessionWatcher.ts  # 会话数据 IPC 监听
+        │   └── useClaudeManager.ts   # PTY 进程管理
         └── styles/
-            └── global.css       # Dark/light themes and app styling
+            └── global.css       # 暗色/浅色主题与全局样式
 ```
 
-## Tech Stack
+## 技术栈
 
-| Component | Technology |
-|-----------|-----------|
-| Desktop Framework | [Electron](https://www.electronjs.org/) 34 |
-| Build Tool | [electron-vite](https://electron-vite.org/) |
-| Frontend | [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) |
-| Terminal | [xterm.js](https://xtermjs.org/) + [node-pty](https://github.com/microsoft/node-pty) |
-| Code Viewer | [Monaco Editor](https://microsoft.github.io/monaco-editor/) |
-| File Watching | [chokidar](https://github.com/paulmillr/chokidar) |
-| Styling | CSS variables with dark, light, and system-aware themes |
+| 组件 | 技术 |
+|------|------|
+| 桌面框架 | [Electron](https://www.electronjs.org/) 34 |
+| 构建工具 | [electron-vite](https://electron-vite.org/) |
+| 前端 | [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) |
+| 终端 | [xterm.js](https://xtermjs.org/) + [node-pty](https://github.com/microsoft/node-pty) |
+| 代码查看器 | [Monaco Editor](https://microsoft.github.io/monaco-editor/) |
+| 文件监听 | [chokidar](https://github.com/paulmillr/chokidar) |
+| 样式 | CSS 变量，支持暗色、浅色和跟随系统主题 |
 
-## License
+## 许可证
 
 [MIT](./LICENSE)
