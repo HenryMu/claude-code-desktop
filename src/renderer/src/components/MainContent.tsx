@@ -1298,6 +1298,7 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
               if (e.key === 'ArrowDown') { e.preventDefault(); setActiveCmdIndex(i => (i + 1) % autocompleteItems.length); return }
               if (e.key === 'ArrowUp') { e.preventDefault(); setActiveCmdIndex(i => (i - 1 + autocompleteItems.length) % autocompleteItems.length); return }
               if (e.key === 'Tab') { e.preventDefault(); selectAutocompleteItem(autocompleteItems[activeCmdIndex]); return }
+              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); selectAutocompleteItem(autocompleteItems[activeCmdIndex]); return }
             }
             handleKeyDown(e)
           }}
