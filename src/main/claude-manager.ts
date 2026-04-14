@@ -40,10 +40,14 @@ interface SidecarSubmission {
 interface ParsedPermissionPrompt {
   prompt: string
   options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary'; description?: string }>
+  /** Value of the cursor-marked (❯) option, if any */
+  cursorValue?: string
 }
 
 const PERMISSION_TIMEOUT_MS = 30_000
 const CONFIRMATION_TIMEOUT_MS = 3_000
+/** Guard: prevent re-detection after fullAuto auto-response */
+const AUTO_RESPONSE_COOLDOWN_MS = 2_000
 const MAX_CONCURRENT_PROCESSES = Infinity
 const WORKSPACE_TRUST_MATCHERS = [
   /Accessing workspace:/i,
@@ -75,6 +79,7 @@ export class ClaudeManager {
     timer: ReturnType<typeof setTimeout>
   }> = new Map()
   private workspaceTrustAttempts: Map<string, number> = new Map()
+  private autoResponseCooldowns: Map<string, ReturnType<typeof setTimeout>> = new Map()
   private resolvedShellEnv: Record<string, string> | null = null
   private resolvedClaudePath: string | null = null
   private processCounter = 0
@@ -126,7 +131,7 @@ export class ClaudeManager {
     if (lines.length < 2) return null
 
     const optionEntries: Array<{ lineIndex: number; value: string; label: string; description?: string }> = []
-    let hasCursor = false
+    let cursorValue: string | null = null
 
     // 兼容两种编号格式: "1. xxx" (有点号) 和 "1 xxx" (无点号)
     const numberedLineRe = /^([❯>▶→*])?\s*(\d+)[.)]\s+(.+?)$/
@@ -137,7 +142,7 @@ export class ClaudeManager {
       const match = line.match(numberedLineRe)
       if (!match) continue
 
-      if (match[1]) hasCursor = true
+      if (match[1]) cursorValue = match[2]
 
       const labelParts = [match[3].trim()]
       let cursor = index + 1
@@ -170,7 +175,7 @@ export class ClaudeManager {
     if (optionEntries.length < 2) return null
 
     // 选择菜单（Enter to select）只需 ≥2 个选项即可，无需 allow/deny 判断
-    if (!hasCursor && !isSelectionMenu) {
+    if (!cursorValue && !isSelectionMenu) {
       const hasAllow = optionEntries.some(e => this.classifyPermissionOption(e.label) === 'allow')
       const hasDeny = optionEntries.some(e => this.classifyPermissionOption(e.label) === 'deny')
       if (!hasAllow || !hasDeny) return null
@@ -196,7 +201,7 @@ export class ClaudeManager {
       description: entry.description
     }))
 
-    return { prompt: promptLine, options }
+    return { prompt: promptLine, options, cursorValue: cursorValue ?? undefined }
   }
 
   private emitPermissionPrompt(processKey: string, promptText: string, options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary'; description?: string }>): void {
@@ -619,8 +624,30 @@ export class ClaudeManager {
     }
   }
 
+  /** 从解析结果中选出 fullAuto 应自动提交的选项值：优先 cursor 推荐项，其次首个 allow */
+  private pickAutoResponseValue(prompt: ParsedPermissionPrompt): string {
+    if (prompt.cursorValue && prompt.options) {
+      const cursorOption = prompt.options.find(o => o.value === prompt.cursorValue)
+      if (cursorOption && cursorOption.kind !== 'deny') return prompt.cursorValue
+    }
+    const allowOption = prompt.options?.find(o => o.kind === 'allow')
+    return allowOption?.value || '1'
+  }
+
+  /** fullAuto 自动应答：设置 cooldown 防重入，延迟写入 PTY */
+  private autoRespond(processKey: string, data: string): void {
+    this.ptyBuffers.set(processKey, '')
+    const timer = setTimeout(() => {
+      this.autoResponseCooldowns.delete(processKey)
+    }, AUTO_RESPONSE_COOLDOWN_MS)
+    this.autoResponseCooldowns.set(processKey, timer)
+    console.log(`[CCD-DEBUG] fullAuto auto-respond: key=${processKey} data=${JSON.stringify(data)}`)
+    setTimeout(() => this.writeRaw(processKey, data), 100)
+  }
+
   private detectPermission(processKey: string, data: string): void {
     if (this.pendingPermissions.has(processKey)) return
+    if (this.autoResponseCooldowns.has(processKey)) return
 
     let buf = this.ptyBuffers.get(processKey) || ''
     buf += data
@@ -637,10 +664,8 @@ export class ClaudeManager {
       console.log(`[CCD-DEBUG] parse result:`, numberedPrompt ? JSON.stringify(numberedPrompt) : 'null')
       if (numberedPrompt) {
         if (this.processes.get(processKey)?.fullAuto) {
-          const allowOption = numberedPrompt.options?.find(o => o.kind === 'allow')
-          const response = (allowOption ? allowOption.value : '1') + '\r'
-          this.ptyBuffers.set(processKey, '')
-          setTimeout(() => this.writeRaw(processKey, response), 100)
+          const value = this.pickAutoResponseValue(numberedPrompt)
+          this.autoRespond(processKey, value + '\r')
           return
         }
         this.emitPermissionPrompt(processKey, numberedPrompt.prompt, numberedPrompt.options)
@@ -654,10 +679,8 @@ export class ClaudeManager {
       const numberedPrompt = this.parseNumberedPermissionPrompt(recent, true)
       if (numberedPrompt) {
         if (this.processes.get(processKey)?.fullAuto) {
-          const allowOption = numberedPrompt.options?.find(o => o.kind === 'allow')
-          const response = (allowOption ? allowOption.value : '1') + '\r'
-          this.ptyBuffers.set(processKey, '')
-          setTimeout(() => this.writeRaw(processKey, response), 100)
+          const value = this.pickAutoResponseValue(numberedPrompt)
+          this.autoRespond(processKey, value + '\r')
           return
         }
         this.emitPermissionPrompt(processKey, numberedPrompt.prompt, numberedPrompt.options)
@@ -670,8 +693,7 @@ export class ClaudeManager {
       console.log(`[CCD-DEBUG] Esc to cancel detected | fullAuto=${this.processes.get(processKey)?.fullAuto}`)
 
       if (this.processes.get(processKey)?.fullAuto) {
-        this.ptyBuffers.set(processKey, '')
-        setTimeout(() => this.writeRaw(processKey, 'y\r'), 100)
+        this.autoRespond(processKey, 'y\r')
         return
       }
 
@@ -1095,6 +1117,8 @@ export class ClaudeManager {
     const confirm = this.responseConfirm.get(processKey)
     if (confirm) { clearTimeout(confirm.timer); this.responseConfirm.delete(processKey) }
     this.ptyBuffers.delete(processKey)
+    const cooldown = this.autoResponseCooldowns.get(processKey)
+    if (cooldown) { clearTimeout(cooldown); this.autoResponseCooldowns.delete(processKey) }
     this.workspaceTrustBuffers.delete(processKey)
     this.workspaceTrustAttempts.delete(processKey)
     this.cleanupSidecarSubmission(processKey, true)
@@ -1148,6 +1172,8 @@ export class ClaudeManager {
     this.responseConfirm.clear()
     this.processes.clear()
     this.ptyBuffers.clear()
+    for (const [, t] of this.autoResponseCooldowns) clearTimeout(t)
+    this.autoResponseCooldowns.clear()
     this.workspaceTrustBuffers.clear()
     this.workspaceTrustAttempts.clear()
     for (const [processKey] of this.sidecarSubmissions) {
