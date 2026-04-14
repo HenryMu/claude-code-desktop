@@ -758,6 +758,7 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
   const cancelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const stuckTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const hasHydratedSessionRef = useRef(false)
+  const configCommandRef = useRef(false)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const turns = useMemo(() => normalizeSessionLines(sessionDetails?.lines || []), [sessionDetails?.lines])
   const latestTurnStatus = turns[turns.length - 1]?.status ?? 'idle'
@@ -823,6 +824,12 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
     if (!sessionDetails) return
     if (!hasHydratedSessionRef.current) {
       hasHydratedSessionRef.current = true
+      return
+    }
+    // 配置切换命令期间不触发"正在思考"
+    if (configCommandRef.current) {
+      setOptimisticThinking(false)
+      setAllowLiveTurnState(false)
       return
     }
     setOptimisticThinking(false)
@@ -900,6 +907,7 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
 
       for (const pattern of patterns) {
         if (pattern.test(buffer)) {
+          configCommandRef.current = false
           setOptimisticThinking(false)
           setAllowLiveTurnState(false)
           setSystemSuccessMsg(buffer.trim())
@@ -972,6 +980,10 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
   const handlePermModeChange = (mode: 'normal' | 'auto' | 'fullAuto' | 'plan') => {
     const prevMode = permMode
     setPermMode(mode)
+    // 权限模式切换不应触发"正在思考"
+    configCommandRef.current = true
+    setOptimisticThinking(false)
+    setAllowLiveTurnState(false)
     if (!processKey) return
     if (mode === 'auto') {
       // Shift+Tab toggles acceptEdits mode in Claude Code CLI
@@ -1003,6 +1015,13 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
       cancelTimerRef.current = null
     }
   }, [isBusy])
+
+  // 安全网：配置命令超时后自动重置标志位（防止标志位卡住）
+  useEffect(() => {
+    if (!configCommandRef.current) return
+    const timer = setTimeout(() => { configCommandRef.current = false }, 5000)
+    return () => clearTimeout(timer)
+  }, [configCommandRef.current])
 
   // Send message
   const handleSend = async () => {
@@ -1253,22 +1272,41 @@ function ConversationTab({ project, realPath, selectedSession, sessionDetails, i
               <span className="permission-countdown">{permissionCountdown}s</span>
             )}
           </div>
+          {!permissionFailed && permissionPrompt.options && permissionPrompt.options.length > 0 && /^\d+$/.test(permissionPrompt.options[0].value) && (
+            <div className="permission-select-list">
+              {permissionPrompt.options.map((option) => (
+                <button
+                  key={`${option.value}-${option.label}`}
+                  className="permission-select-item"
+                  onClick={() => handlePermissionResponse(option.value)}
+                >
+                  <span className="permission-select-value">{option.value}.</span>
+                  <div className="permission-select-content">
+                    <span className="permission-select-label">{option.label}</span>
+                    {option.description && <span className="permission-select-desc">{option.description}</span>}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
           <div className="permission-bar-actions">
             {!permissionFailed && (
               <div className="permission-actions">
-                {(permissionPrompt.options && permissionPrompt.options.length > 0 ? permissionPrompt.options : [
-                  { label: t('permission.allow'), value: 'y', kind: 'allow' as const },
-                  { label: t('permission.always'), value: 'a', kind: 'secondary' as const },
-                  { label: t('permission.deny'), value: 'n', kind: 'deny' as const }
-                ]).map((option) => (
-                  <button
-                    key={`${option.value}-${option.label}`}
-                    className={`btn ${option.kind === 'deny' ? 'btn-deny' : option.kind === 'secondary' ? 'btn-secondary' : 'btn-allow'}`}
-                    onClick={() => handlePermissionResponse(option.value)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
+                {(!permissionPrompt.options || permissionPrompt.options.length === 0 || !/^\d+$/.test(permissionPrompt.options[0].value)) && (
+                  (permissionPrompt.options && permissionPrompt.options.length > 0 ? permissionPrompt.options : [
+                    { label: t('permission.allow'), value: 'y', kind: 'allow' as const },
+                    { label: t('permission.always'), value: 'a', kind: 'secondary' as const },
+                    { label: t('permission.deny'), value: 'n', kind: 'deny' as const }
+                  ]).map((option) => (
+                    <button
+                      key={`${option.value}-${option.label}`}
+                      className={`btn ${option.kind === 'deny' ? 'btn-deny' : option.kind === 'secondary' ? 'btn-secondary' : 'btn-allow'}`}
+                      onClick={() => handlePermissionResponse(option.value)}
+                    >
+                      {option.label}
+                    </button>
+                  ))
+                )}
               </div>
             )}
             <div className="permission-manual">
@@ -1758,6 +1796,13 @@ function InputToolbar({ processKey, isConnected, t, currentModel, currentEffort,
 
   const sendCommand = (cmd: string) => {
     if (!processKey || !isConnected) return
+    // 配置切换命令不应触发"正在思考"状态
+    const isConfigCmd = /^\/(model|effort|fast|permissions?|config|plan)\b/.test(cmd)
+    if (isConfigCmd) {
+      configCommandRef.current = true
+      setOptimisticThinking(false)
+      setAllowLiveTurnState(false)
+    }
     window.electronAPI.ptyWrite(processKey, cmd + '\r')
   }
 

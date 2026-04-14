@@ -35,7 +35,7 @@
     "inputPlaceholder": "輸入訊息，按 Enter 發送...",
     "inputPlaceholderOffline": "連線後開始輸入...",
     "send": "發送",
-    "thinking": "Claude 正在思考...",
+    "thinking": "Claude 思考",
     "runningTools": "Claude 正在執行工具...",
     "planning": "Claude 正在規劃...",
     "waitingPermission": "等待權限確認...",
@@ -61,7 +61,7 @@
     "maxReached": "連線失敗，已達到最大會話數。"
   },
   "tools": {
-    "thinking": "思考中..."
+    "thinking": "思考"
   },
   "language": {
     "switch": "繁體中文",

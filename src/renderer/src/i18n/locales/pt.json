@@ -35,7 +35,7 @@
     "inputPlaceholder": "Digite uma mensagem e pressione Enter...",
     "inputPlaceholderOffline": "Conecte-se para começar a digitar...",
     "send": "Enviar",
-    "thinking": "Claude está pensando...",
+    "thinking": "Claude pensando",
     "runningTools": "Claude está executando ferramentas...",
     "planning": "Claude está planejando...",
     "waitingPermission": "Aguardando confirmação de permissão...",
@@ -61,7 +61,7 @@
     "maxReached": "Falha ao conectar. Limite máximo de sessões atingido."
   },
   "tools": {
-    "thinking": "Pensando..."
+    "thinking": "Pensando"
   },
   "language": {
     "switch": "Português",

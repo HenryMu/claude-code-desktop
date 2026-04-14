@@ -35,7 +35,7 @@
     "inputPlaceholder": "संदेश टाइप करें और Enter दबाएं...",
     "inputPlaceholderOffline": "कनेक्ट होने के बाद टाइप करें...",
     "send": "भेजें",
-    "thinking": "Claude सोच रहा है...",
+    "thinking": "Claude सोच",
     "runningTools": "Claude टूल चला रहा है...",
     "planning": "Claude योजना बना रहा है...",
     "waitingPermission": "अनुमति पुष्टि की प्रतीक्षा...",
@@ -61,7 +61,7 @@
     "maxReached": "कनेक्ट विफल। अधिकतम सेशन सीमा पहुंची।"
   },
   "tools": {
-    "thinking": "सोच रहा है..."
+    "thinking": "सोच"
   },
   "language": {
     "switch": "हिन्दी",

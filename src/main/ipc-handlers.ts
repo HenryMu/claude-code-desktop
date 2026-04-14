@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, app } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { SessionWatcher } from './session-watcher'
@@ -239,5 +239,16 @@ export function registerIpcHandlers(
         dataUrl: `data:image/${mime};base64,${data.toString('base64')}`
       }
     })
+  })
+
+  // ===== App info =====
+
+  ipcMain.handle('get-app-version', () => {
+    return app.getVersion()
+  })
+
+  ipcMain.on('open-external', (_: unknown, url: string) => {
+    const { shell } = require('electron')
+    shell.openExternal(url)
   })
 }

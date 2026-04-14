@@ -79,7 +79,7 @@
     "send": "发送",
     "uploadImage": "上传图片",
     "cancel": "取消 (Esc)",
-    "thinking": "Claude 正在思考...",
+    "thinking": "Claude 思考",
     "runningTools": "Claude 正在执行工具...",
     "planning": "Claude 正在规划...",
     "waitingPermission": "等待权限确认...",
@@ -105,7 +105,7 @@
     "maxReached": "连接失败，已达到最大会话数。"
   },
   "tools": {
-    "thinking": "思考中..."
+    "thinking": "思考"
   },
   "language": {
     "switch": "EN",
@@ -170,5 +170,15 @@
     "/copy": "复制回复",
     "/mcp": "MCP 服务",
     "/doctor": "诊断问题"
+  },
+  "about": {
+    "title": "关于",
+    "description": "免费、开源的 Claude Code CLI 桌面会话管理 GUI 客户端。",
+    "version": "版本",
+    "github": "GitHub",
+    "checkUpdate": "检查更新",
+    "checking": "正在检查更新...",
+    "upToDate": "已是最新版本",
+    "retry": "重试"
   }
 }

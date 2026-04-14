@@ -79,7 +79,7 @@
     "send": "Send",
     "uploadImage": "Upload images",
     "cancel": "Cancel (Esc)",
-    "thinking": "Claude is thinking...",
+    "thinking": "Claude thinking",
     "runningTools": "Claude is running tools...",
     "planning": "Claude is planning...",
     "waitingPermission": "Waiting for permission...",
@@ -105,7 +105,7 @@
     "maxReached": "Failed to connect. Max sessions reached."
   },
   "tools": {
-    "thinking": "Thinking..."
+    "thinking": "Thinking"
   },
   "language": {
     "switch": "中文",
@@ -170,5 +170,15 @@
     "/copy": "Copy last response",
     "/mcp": "Manage MCP servers",
     "/doctor": "Diagnose issues"
+  },
+  "about": {
+    "title": "About",
+    "description": "A free, open-source Claude Code CLI desktop session management GUI client.",
+    "version": "Version",
+    "github": "GitHub",
+    "checkUpdate": "Check for Updates",
+    "checking": "Checking for updates...",
+    "upToDate": "Already up to date",
+    "retry": "Retry"
   }
 }

@@ -63,9 +63,35 @@ export function initAutoUpdater(mainWindow: BrowserWindow): void {
   ipcMain.handle('check-for-updates', async () => {
     try {
       const result = await autoUpdater.checkForUpdates()
-      return {
-        updateInfo: result?.updateInfo ?? null,
-        cancellationToken: result?.cancellationToken ?? null
+      if (result?.updateInfo) {
+        return {
+          updateInfo: result.updateInfo,
+          cancellationToken: result.cancellationToken ?? null
+        }
+      }
+      // Fallback: query GitHub Releases API directly (works in dev mode)
+      try {
+        const { app } = require('electron')
+        const currentVersion = app.getVersion()
+        const res = await fetch('https://api.github.com/repos/HenryMu/claude-libre/releases/latest', {
+          headers: { 'User-Agent': 'claude-libre' }
+        })
+        if (!res.ok) return { updateInfo: null }
+        const release = await res.json() as any
+        const latestVersion = (release.tag_name || '').replace(/^v/, '')
+        if (latestVersion && latestVersion !== currentVersion) {
+          return {
+            updateInfo: {
+              version: latestVersion,
+              releaseDate: release.published_at,
+              releaseNotes: release.body,
+              currentVersion
+            }
+          }
+        }
+        return { updateInfo: null }
+      } catch {
+        return { updateInfo: null }
       }
     } catch (err: any) {
       return { updateInfo: null, error: err.message }

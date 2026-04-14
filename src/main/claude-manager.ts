@@ -26,7 +26,7 @@ interface PendingPermission {
   prompt: string
   timestamp: number
   timer: ReturnType<typeof setTimeout>
-  options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary' }>
+  options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary'; description?: string }>
   requestId?: string
   toolUseId?: string
 }
@@ -39,24 +39,8 @@ interface SidecarSubmission {
 
 interface ParsedPermissionPrompt {
   prompt: string
-  options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary' }>
+  options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary'; description?: string }>
 }
-
-const PERMISSION_PATTERNS: RegExp[] = [
-  /Do you want to allow[\s\S]{0,300}?\?/i,
-  /Allow(?:\s+Claude)?\s+(?:to\s+)?[\s\S]{0,300}?\?/i,
-  /Allow this[\s\S]{0,200}?\?/i,
-  /\[Y\/n\]/, /\[y\/N\]/, /\[y\/n\]/i,
-  /\(yes\/no\)/i, /\(y\/n\)/i, /\(Y\/N\)/,
-  /Claude wants to[\s\S]{0,300}?\?/i,
-  /wants to (?:run|use|execute|access|write|edit|read|create|delete|move|copy|modify)[\s\S]{0,200}/i,
-  /Permission required[\s\S]{0,200}/i,
-  /Proceed[\s\S]{0,100}?\?/i,
-  /Press Enter to[\s\S]{0,100}/i,
-  /continue\?[\s\S]{0,50}\(y\/n\)/i,
-  /\?\s*\n?\s*\(?(?:y\/n|yes\/no)\)?/i,
-  /allow(?:ing)?\s+(?:the\s+)?(?:tool|command|bash|script|operation)[\s\S]{0,200}/i,
-]
 
 const PERMISSION_TIMEOUT_MS = 30_000
 const CONFIRMATION_TIMEOUT_MS = 3_000
@@ -131,7 +115,7 @@ export class ClaudeManager {
     return 'allow'
   }
 
-  private parseNumberedPermissionPrompt(recent: string): ParsedPermissionPrompt | null {
+  private parseNumberedPermissionPrompt(recent: string, isSelectionMenu = false): ParsedPermissionPrompt | null {
     const normalized = this.normalizeTerminalText(recent)
     if (!normalized) return null
 
@@ -139,14 +123,18 @@ export class ClaudeManager {
       .split('\n')
       .map((line) => line.replace(/\s+$/g, ''))
 
-    if (lines.length < 3) return null
+    if (lines.length < 2) return null
 
-    const optionEntries: Array<{ lineIndex: number; value: string; label: string }> = []
+    const optionEntries: Array<{ lineIndex: number; value: string; label: string; description?: string }> = []
     let hasCursor = false
+
+    // 兼容两种编号格式: "1. xxx" (有点号) 和 "1 xxx" (无点号)
+    const numberedLineRe = /^([❯>▶→*])?\s*(\d+)[.)]\s+(.+?)$/
+    const nextOptionRe = /^(?:[❯>▶→*]\s*)?\d+[.)]\s+/
 
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index].trim()
-      const match = line.match(/^([❯>▶→*])?\s*(\d+)\.\s+(.+?)$/)
+      const match = line.match(numberedLineRe)
       if (!match) continue
 
       if (match[1]) hasCursor = true
@@ -160,24 +148,29 @@ export class ClaudeManager {
           cursor += 1
           continue
         }
-        if (/^(?:[❯>▶→*]\s*)?\d+\.\s+/.test(nextLine)) break
+        if (nextOptionRe.test(nextLine)) break
         if (/enter to confirm|esc to cancel/i.test(nextLine)) break
+        if (/^─+$/.test(nextLine)) break
         labelParts.push(nextLine)
         cursor += 1
       }
 
-      optionEntries.push({
+      const entry: { lineIndex: number; value: string; label: string; description?: string } = {
         lineIndex: index,
         value: match[2],
-        label: labelParts.join(' ')
-      })
+        label: labelParts[0]
+      }
+      if (labelParts.length > 1) {
+        entry.description = labelParts.slice(1).join(' ')
+      }
+      optionEntries.push(entry)
       index = cursor - 1
     }
 
     if (optionEntries.length < 2) return null
 
-    // 有光标前缀 → 确定是权限菜单；无光标但选项同时含允许/拒绝 → 也视为权限菜单
-    if (!hasCursor) {
+    // 选择菜单（Enter to select）只需 ≥2 个选项即可，无需 allow/deny 判断
+    if (!hasCursor && !isSelectionMenu) {
       const hasAllow = optionEntries.some(e => this.classifyPermissionOption(e.label) === 'allow')
       const hasDeny = optionEntries.some(e => this.classifyPermissionOption(e.label) === 'deny')
       if (!hasAllow || !hasDeny) return null
@@ -187,23 +180,26 @@ export class ClaudeManager {
     const promptCandidates = lines
       .slice(Math.max(0, firstOptionIndex - 4), firstOptionIndex)
       .map((line) => line.trim())
-      .filter((line) => line && !/^(?:enter to confirm|esc to cancel)$/i.test(line))
+      .filter((line) => line && !/^(?:enter to confirm|esc to cancel)$/i.test(line) && !/^─+$/.test(line))
 
-    const promptLine = [...promptCandidates].reverse().find((line) => /[?？]\s*$/.test(line))
-      || promptCandidates[promptCandidates.length - 1]
+    const promptLine = isSelectionMenu
+      ? (promptCandidates[promptCandidates.length - 1] || null)
+      : ([...promptCandidates].reverse().find((line) => /[?？]\s*$/.test(line))
+        || promptCandidates[promptCandidates.length - 1])
 
     if (!promptLine) return null
 
     const options = optionEntries.map((entry) => ({
       label: entry.label,
       value: entry.value,
-      kind: this.classifyPermissionOption(entry.label)
+      kind: this.classifyPermissionOption(entry.label),
+      description: entry.description
     }))
 
     return { prompt: promptLine, options }
   }
 
-  private emitPermissionPrompt(processKey: string, promptText: string, options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary' }>): void {
+  private emitPermissionPrompt(processKey: string, promptText: string, options?: Array<{ label: string; value: string; kind?: 'allow' | 'deny' | 'secondary'; description?: string }>): void {
     const entry = this.processes.get(processKey)
     const project = entry?.projectSanitizedName || ''
 
@@ -633,69 +629,55 @@ export class ClaudeManager {
     const normalized = this.normalizeTerminalText(buf)
     const recent = normalized.slice(-2000)
 
-    // ── DEBUG: 输出每次 onData 的关键信息 ──
-    const procEntry = this.processes.get(processKey)
-    if (procEntry?.fullAuto) {
-      const hasEscCancel = /Esc to cancel/i.test(recent)
-      if (hasEscCancel || /(?:do you want|allow|proceed)\?/i.test(recent) || /^\s*\d+\.\s+/m.test(recent)) {
-        console.log(`[CCD-DEBUG] detectPermission fullAuto=true | bufLen=${buf.length} | recentLen=${recent.length}`)
-        console.log(`[CCD-DEBUG] hasEscCancel=${hasEscCancel}`)
-        console.log(`[CCD-DEBUG] normalized recent:\n${recent.slice(-800)}`)
-      }
-    }
-
-    const numberedPrompt = this.parseNumberedPermissionPrompt(recent)
-    if (numberedPrompt) {
-      console.log(`[CCD-DEBUG] numberedPrompt MATCHED: "${numberedPrompt.prompt}" | fullAuto=${procEntry?.fullAuto}`)
-      if (procEntry?.fullAuto) {
-        const allowOption = numberedPrompt.options?.find(o => o.kind === 'allow')
-        const response = (allowOption ? allowOption.value : '1') + '\r'
-        this.ptyBuffers.set(processKey, '')
-        setTimeout(() => this.writeRaw(processKey, response), 100)
-        return
-      }
-      this.emitPermissionPrompt(processKey, numberedPrompt.prompt, numberedPrompt.options)
-      return
-    }
-
-    for (const pattern of PERMISSION_PATTERNS) {
-      const match = recent.match(pattern)
-      if (match) {
-        console.log(`[CCD-DEBUG] PERMISSION_PATTERN matched: "${match[0].slice(0, 80)}" | fullAuto=${procEntry?.fullAuto}`)
-        if (procEntry?.fullAuto) {
+    // Enter to select → 选择菜单，解析编号选项作为竖向列表
+    if (/Enter to select/i.test(recent)) {
+      console.log(`[CCD-DEBUG] Enter to select detected`)
+      console.log(`[CCD-DEBUG] recent text:\n${recent.slice(-1500)}`)
+      const numberedPrompt = this.parseNumberedPermissionPrompt(recent, true)
+      console.log(`[CCD-DEBUG] parse result:`, numberedPrompt ? JSON.stringify(numberedPrompt) : 'null')
+      if (numberedPrompt) {
+        if (this.processes.get(processKey)?.fullAuto) {
+          const allowOption = numberedPrompt.options?.find(o => o.kind === 'allow')
+          const response = (allowOption ? allowOption.value : '1') + '\r'
           this.ptyBuffers.set(processKey, '')
-          setTimeout(() => this.writeRaw(processKey, 'y\r'), 100)
+          setTimeout(() => this.writeRaw(processKey, response), 100)
           return
         }
-        const idx = match.index || 0
-        const start = Math.max(0, idx - 50)
-        const end = Math.min(recent.length, idx + match[0].length + 200)
-        const promptText = recent.slice(start, end).trim()
-        this.emitPermissionPrompt(processKey, promptText)
+        this.emitPermissionPrompt(processKey, numberedPrompt.prompt, numberedPrompt.options)
         return
       }
     }
 
-    // 兜底：Claude Code 所有交互式提示底部都有 "Esc to cancel"
-    // 只要有这个标志就说明当前在等待用户确认
-    if (/Esc to cancel/i.test(recent)) {
-      console.log(`[CCD-DEBUG] Esc to cancel FALLBACK | fullAuto=${procEntry?.fullAuto}`)
-      if (procEntry?.fullAuto) {
-        // 尝试发送编号选项 "1"（通常是 Yes），如果编号解析失败则发 y
-        const numberedRetry = this.parseNumberedPermissionPrompt(recent)
-        const response = numberedRetry
-          ? (numberedRetry.options?.find(o => o.kind === 'allow')?.value || '1') + '\r'
-          : 'y\r'
-        console.log(`[CCD-DEBUG] Esc fallback response: "${response}" | numberedRetry=${!!numberedRetry}`)
-        this.ptyBuffers.set(processKey, '')
-        setTimeout(() => this.writeRaw(processKey, response), 100)
+    // ctrl-g to edit → 计划确认菜单（plan review），解析编号选项
+    if (/ctrl-g to edit/i.test(recent)) {
+      console.log(`[CCD-DEBUG] ctrl-g to edit detected (plan review)`)
+      const numberedPrompt = this.parseNumberedPermissionPrompt(recent, true)
+      if (numberedPrompt) {
+        if (this.processes.get(processKey)?.fullAuto) {
+          const allowOption = numberedPrompt.options?.find(o => o.kind === 'allow')
+          const response = (allowOption ? allowOption.value : '1') + '\r'
+          this.ptyBuffers.set(processKey, '')
+          setTimeout(() => this.writeRaw(processKey, response), 100)
+          return
+        }
+        this.emitPermissionPrompt(processKey, numberedPrompt.prompt, numberedPrompt.options)
         return
       }
-      // 提取提示文本：从 "Esc to cancel" 往上找最近的问号行
+    }
+
+    // Esc to cancel → 普通权限确认，显示默认 Yes/No 按钮
+    if (/Esc to cancel/i.test(recent)) {
+      console.log(`[CCD-DEBUG] Esc to cancel detected | fullAuto=${this.processes.get(processKey)?.fullAuto}`)
+
+      if (this.processes.get(processKey)?.fullAuto) {
+        this.ptyBuffers.set(processKey, '')
+        setTimeout(() => this.writeRaw(processKey, 'y\r'), 100)
+        return
+      }
+
       const escIdx = recent.lastIndexOf('Esc to cancel')
       if (escIdx > 0) {
         const beforeEsc = recent.slice(0, escIdx).trimEnd()
-        // 找最后一个问号行作为提示
         const lines = beforeEsc.split('\n').map(l => l.trim()).filter(Boolean)
         const questionLine = [...lines].reverse().find(l => /[?？]\s*$/.test(l))
         const promptText = questionLine || lines[lines.length - 1] || 'Permission required'
@@ -1050,15 +1032,9 @@ export class ClaudeManager {
 
       if (this.responseConfirm.has(processKey)) {
         const normalized = this.normalizeTerminalText(data).slice(-800)
-        if (this.parseNumberedPermissionPrompt(normalized)) {
+        if (/Esc to cancel/i.test(normalized)) {
           this.handleResponseRetry(processKey)
           return
-        }
-        for (const pattern of PERMISSION_PATTERNS) {
-          if (pattern.test(normalized)) {
-            this.handleResponseRetry(processKey)
-            return
-          }
         }
       }
       if (this.detectWorkspaceTrustPrompt(processKey, data)) return

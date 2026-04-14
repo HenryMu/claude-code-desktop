@@ -35,7 +35,7 @@
     "inputPlaceholder": "메시지를 입력하고 Enter를 누르세요...",
     "inputPlaceholderOffline": "연결 후 입력을 시작하세요...",
     "send": "보내기",
-    "thinking": "Claude가 생각 중입니다...",
+    "thinking": "Claude 생각 중",
     "runningTools": "Claude가 도구를 실행 중입니다...",
     "planning": "Claude가 계획 중입니다...",
     "waitingPermission": "권한 확인을 기다리는 중...",
@@ -61,7 +61,7 @@
     "maxReached": "연결 실패. 최대 세션 수에 도달했습니다."
   },
   "tools": {
-    "thinking": "생각 중..."
+    "thinking": "생각 중"
   },
   "language": {
     "switch": "한국어",

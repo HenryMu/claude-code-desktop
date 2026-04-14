@@ -193,6 +193,7 @@ export interface PermissionOptionPayload {
   label: string
   value: string
   kind?: 'allow' | 'deny' | 'secondary'
+  description?: string
 }
 
 export interface PermissionPromptPayload {
@@ -320,4 +321,9 @@ export interface ElectronAPI {
   checkForUpdates: () => Promise<{ updateInfo: any; error?: string }>
   downloadUpdate: () => Promise<void>
   quitAndInstall: () => void
+
+  // App info
+  getAppVersion: () => Promise<string>
+  onOpenAbout: (callback: () => void) => () => void
+  openExternal: (url: string) => void
 }

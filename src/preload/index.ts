@@ -28,6 +28,16 @@ const electronAPI: ElectronAPI = {
   checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
   downloadUpdate: () => ipcRenderer.invoke('download-update'),
   quitAndInstall: () => ipcRenderer.send('quit-and-install'),
+
+  // App info
+  getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+  onOpenAbout: (callback: () => void) => {
+    const handler = () => callback()
+    ipcRenderer.on('open-about', handler)
+    return () => ipcRenderer.removeListener('open-about', handler)
+  },
+  openExternal: (url: string) => ipcRenderer.send('open-external', url),
+
   // Session data events
   onInitialData: (callback) => {
     const handler = (_: unknown, data: unknown) => callback(data as any)

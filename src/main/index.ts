@@ -53,7 +53,7 @@ function buildTrayMenu(): Menu {
     {
       label: t.about,
       click: () => {
-        shell.openExternal(REPO_URL)
+        mainWindow?.webContents.send('open-about')
       }
     },
     { type: 'separator' },

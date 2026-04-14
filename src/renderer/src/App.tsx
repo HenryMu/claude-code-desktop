@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar'
 import MainContent from './components/MainContent'
 import SettingsModal from './components/SettingsModal'
 import UpdateNotification from './components/UpdateNotification'
+import AboutModal from './components/AboutModal'
 import { useSessionWatcher } from './hooks/useSessionWatcher'
 import { useClaudeManager } from './hooks/useClaudeManager'
 import type { SessionMeta, CodeViewContext } from '../../shared/types'
@@ -38,6 +39,7 @@ export default function App() {
   // Track the processKey for the "new session" terminal
   const [newSessionProcessKey, setNewSessionProcessKey] = useState<string | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [aboutOpen, setAboutOpen] = useState(false)
   const [codeViewContext, setCodeViewContext] = useState<CodeViewContext | null>(null)
   const pendingStartupRef = useRef<PendingConversationStartup | null>(null)
 
@@ -257,6 +259,11 @@ export default function App() {
     pendingStartupRef.current = null
   }, [sessionState.selectedSession])
 
+  useEffect(() => {
+    const unsub = window.electronAPI.onOpenAbout(() => setAboutOpen(true))
+    return unsub
+  }, [])
+
   return (
     <div className="app-layout">
       <Sidebar
@@ -286,6 +293,7 @@ export default function App() {
         onClearCodeView={() => setCodeViewContext(null)}
       />
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
       <UpdateNotification />
     </div>
   )

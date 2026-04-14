@@ -35,7 +35,7 @@
     "inputPlaceholder": "メッセージを入力して Enter...",
     "inputPlaceholderOffline": "接続して入力を開始...",
     "send": "送信",
-    "thinking": "Claude が考えています...",
+    "thinking": "Claude 考え中",
     "runningTools": "Claude がツールを実行中...",
     "planning": "Claude が計画中...",
     "waitingPermission": "権限の確認待ち...",
@@ -61,7 +61,7 @@
     "maxReached": "接続に失敗。最大セッション数に達しました。"
   },
   "tools": {
-    "thinking": "思考中..."
+    "thinking": "考え中"
   },
   "language": {
     "switch": "日本語",
