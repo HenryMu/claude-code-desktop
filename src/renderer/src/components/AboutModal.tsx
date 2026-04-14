@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import logoUrl from '/logo.png'
 
 const REPO_URL = 'https://github.com/HenryMu/claude-libre'
 
@@ -70,7 +71,7 @@ export default function AboutModal({ open, onClose }: AboutModalProps) {
         <div className="modal-body">
           <div className="about-content">
             <div className="about-logo">
-              <span className="about-logo-icon">C</span>
+              <img className="about-logo-img" src={logoUrl} alt="Claude Libre" />
             </div>
             <h2 className="about-app-name">Claude Libre</h2>
             <p className="about-desc">
